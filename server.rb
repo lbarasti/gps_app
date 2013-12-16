@@ -27,9 +27,15 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 } #if settings.environment == :development
 
 get '/getdata/:channel' do
-	content_type :json
 	halt(404) if @@data[params[:channel].to_sym].nil?
-	@@data[params[:channel].to_sym][:routes].values.to_json
+	data = @@data[params[:channel].to_sym][:routes].values.to_json
+	if request["callback"]
+		content_type 'text/plain'
+		"#{request["callback"]}(#{data})"
+	else
+		content_type :json
+		data
+	end
 end
 
 post '/post/:channel' do
