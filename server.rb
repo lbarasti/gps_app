@@ -53,6 +53,10 @@ post '/post/:channel' do
 	}
 end
 
+get '/displayJS' do
+  send_file File.join(settings.public_folder, 'bustracker.html')
+end
+
 get '/form/:channel' do
 	content_type :html
 	<<-END
