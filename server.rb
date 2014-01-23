@@ -46,7 +46,8 @@ post '/post/:channel' do
 			route: params[:route],
 			longitude: params[:longitude],
 			latitude: params[:latitude],
-			timestamp: params[:timestamp]
+			timestamp: params[:timestamp],
+			last_restarted: params[:last_restarted]
 			# to_a: params[:to_a],
 			# to_b: params[:to_b]
 		}
