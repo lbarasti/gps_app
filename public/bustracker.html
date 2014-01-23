@@ -26,7 +26,12 @@ html,body,#map-canvas {
 //max -0.208826 to -0.251999
 //max 51.7757 to 51.755117
 
+	// bus icon settings
+	var id_to_icon = {};
+	id_to_icon['HTC Desire C'] = 'black.png';
+	id_to_icon['HTC Desire S'] = 'red.png';
 
+	// map borders
     var maxLat = 51.7757;
     var minLat = 51.755117;
     var maxLng = -0.208826;
@@ -90,9 +95,8 @@ html,body,#map-canvas {
         return hstr + ':' + mstr + ':' + sstr;
 	}
 	
-	function getRouteImage(filename) {
-		var image = 'red.png';
-		return image;
+	function getRouteImage(device_id) {
+		return id_to_icon[device_id] || 'green.png';
 	}
 	
     function refreshJson() {
