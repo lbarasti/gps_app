@@ -108,7 +108,7 @@ html,body,#map-canvas {
 	        for ( var i in myObject) {
 	            var ll = new google.maps.LatLng(myObject[i].latitude,myObject[i].longitude)
 	            var delta = howLong(myObject[i].timestamp);
-                var image = getRouteImage(route);
+                var image = getRouteImage(myObject[i].route);
                 
 	            $('#info').append('<img src='+image+'> [' + myObject[i].route + '] last reported ['+formatinHMS(delta)+'] ago');
 	            
