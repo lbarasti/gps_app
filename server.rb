@@ -40,6 +40,8 @@ end
 
 post '/post/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
+	return if params[:accuracy].to_f > 100
+
 	@@data_lock.synchronize{
 		#@@data[params[:channel].to_sym] ||= {routes:{}, info:{}} # we'll deal with initialisation elsewhere
 		@@data[params[:channel].to_sym][:routes][params[:route]] = {
@@ -47,9 +49,8 @@ post '/post/:channel' do
 			longitude: params[:longitude],
 			latitude: params[:latitude],
 			timestamp: params[:timestamp],
-			last_restarted: params[:last_restarted]
-			# to_a: params[:to_a],
-			# to_b: params[:to_b]
+			last_restarted: params[:last_restarted],
+			accuracy: params[:accuracy]
 		}
 	}
 end
