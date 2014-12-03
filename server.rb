@@ -15,7 +15,8 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 
 @@data[:ocado] = {
 	routes: {},
-	info: {}
+	info: {},
+	history: {}
 }
 
 @@data[:demo] = {
@@ -23,12 +24,36 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 		blackberry: {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
 		strawberry: {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013'}
 	},
-	info: {a: 'Station', b: 'Ocado'}
+	info: {a: 'Station', b: 'Ocado'},
+	history: {
+		blackberry: [
+		    {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.03002, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:20 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.03004, latitude: 51.64002, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.03006, latitude: 51.64004, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013'}
+		],
+		strawberry: [
+		    {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013'},
+		    {route: 'strawberry', longitude: -0.151, latitude: 54.221, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013'}
+		]
+	},
 } #if settings.environment == :development
 
 get '/getdata/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
 	data = @@data[params[:channel].to_sym][:routes].values.to_json
+	if request["callback"]
+		content_type 'text/plain'
+		"#{request["callback"]}(#{data})"
+	else
+		content_type :json
+		data
+	end
+end
+
+get '/gethistory/:channel' do
+	halt(404) if @@data[params[:channel].to_sym].nil?
+	data = @@data[params[:channel].to_sym][:history].values.to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
