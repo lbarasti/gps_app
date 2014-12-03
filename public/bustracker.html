@@ -27,9 +27,12 @@ html,body,#map-canvas {
 //max 51.7757 to 51.755117
 
 	// bus icon settings
-	var id_to_icon = {};
-	id_to_icon['HTC Desire C'] = 'black.png';
-	id_to_icon['HTC Desire S'] = 'red.png';
+	var id_to_png = {};
+	id_to_png['HTC Desire C'] = 'black';
+	id_to_png['GT-I8190N'] = 'black';
+	id_to_png['blackberry'] = 'black';
+	id_to_png['HTC Desire S'] = 'red';
+	id_to_png['strawberry'] = 'red';
 
 	// map borders
     var maxLat = 51.7757;
@@ -52,6 +55,7 @@ html,body,#map-canvas {
 	var llTitan = new google.maps.LatLng(51.762488, -0.243518);
 	var map;
 	var markers = new Array();
+	var max_trail = 5;
 	
 	function initialize() {
 
@@ -94,47 +98,95 @@ html,body,#map-canvas {
         var sstr = String("0" + s).slice(-2);
         return hstr + ':' + mstr + ':' + sstr;
 	}
+
+	function getAlphaString(n) {
+		var i = 1
+		if (n < i) {
+			return ''
+		} else if (n < i+1) {
+			return '75'
+		} else if (n < i+2) {
+			return '50'
+		} else {
+			return '25'
+		}
+	}
 	
-	function getRouteImage(device_id) {
-		return id_to_icon[device_id] || 'green.png';
+	function getRouteImage(device_id, n) {
+		var suffix = '.png'
+		var colour = id_to_png[device_id] || 'green';
+		var aa = getAlphaString(n)
+		var iconn = colour + aa + suffix
+		return iconn
 	}
 	
     function refreshJson() {
-	    $.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
+	    //$.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
+	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
 	        var oneIsOutside = false;
-	        for ( var i in myObject) {
-	            var ll = new google.maps.LatLng(myObject[i].latitude,myObject[i].longitude)
-	            var delta = howLong(myObject[i].timestamp);
-                var image = getRouteImage(myObject[i].route);
-                
-	            $('#info').append('<img src='+image+'> [' + myObject[i].route + '] last reported ['+formatinHMS(delta)+'] ago');
-	            
-	            var route = myObject[i].route;
-	            var marker = markers[route];
-                //$('#info').append('<li>[marker='+marker+']</li>');
-	            if (marker === null || marker === undefined) {
-		            marker = new google.maps.Marker({
-		                position : ll,
-		                map : map,
-		                title : route,
-		                icon: image
-		            });
-		            markers[route] = marker;
-	            } else {
-	            	marker.setPosition(ll);
-	            }
-	            if (!normalBounds.contains(ll)) {
-	            	oneIsOutside = true;
-	                $('#info').append(' and is outside the normal (shaded) area');
-	            }
-	            $('#info').append('<br>');
+	        var totlength = myObject.length
+	        for (var na = 0; na < myObject.length; na++) {
+	        	var array = myObject[na].sort(function (r0,r1) {return r1.timestamp.localeCompare(r0.timestamp)}); // hacky compare relies on strings...
+	        	var rlabel
+	        	var recent
+	        	totlength = totlength + array.length
+	        	for (var nr = 0; nr < array.length && nr < max_trail; nr++) {
+	        		var myInnerObject = array[nr]
+	        		var i = myInnerObject.route
+	        		rlabel = i
+		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
+		            var delta = howLong(myInnerObject.timestamp);
+	        		if (!recent || recent > delta) {recent = delta;}
+	                var image = getRouteImage(i, nr);
+		            var route = i + nr;
+		            var marker = markers[route];
+		            if (marker === null || marker === undefined) {
+			            marker = new google.maps.Marker({
+			                position : ll,
+			                map : map,
+			                title : route,
+			                icon: image
+			            });
+			            markers[route] = marker;
+		            } else {
+		            	marker.setPosition(ll);
+		            	marker.setMap(map); // just in case it was hidden
+		            }
+		            if (!normalBounds.contains(ll)) {
+		            	oneIsOutside = true;
+		            }
+		            
+		            if (nr > 0) {
+	        			var oldObject = array[nr-1]
+		                var oldll = new google.maps.LatLng(oldObject.latitude,oldObject.longitude)
+		                //TODO draw or re-draw lines?
+		            }
+		        }
+
+				//remove old markers
+		        if (rlabel) {
+			        for (var remn = array.length; markers[rlabel+remn] && (remn < max_trail); remn++) {
+			        	var marker = markers[rlabel+remn]
+			        	marker.setMap(null)
+			        	//TODO remove old lines if drawn...
+			        }
+			    }
+
+		        if (rlabel && recent && recent > 60) {
+		        	var image = getRouteImage(rlabel, 0);
+		        	$('#info').append('<br><img src='+image+'> last reported '+formatinHMS(recent)+' ago...?');
+		        }
+	        }
+
+	        if (oneIsOutside) {
+	        	$('#info').append('<br>NB: some abnormal location readings');
 	        }
 	        
-	        if (myObject.length == 0) {
-	            $('#info').append('There is no bus info - maybe the phones are off...');
+	        if (totlength == 0) {
+	            $('#info').append('<br>There is no bus info!');
 	        }
             
             if (oneIsOutside) {
