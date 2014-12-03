@@ -27,8 +27,8 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 	info: {a: 'Station', b: 'Ocado'},
 	history: {
 		blackberry: [
-		    {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
-		    {route: 'blackberry', longitude: -0.03002, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:20 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.03001, latitude: 51.64001, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.03002, latitude: 51.64001, timestamp: 'Thu Oct 17 21:51:20 GMT+01:00 2013'},
 		    {route: 'blackberry', longitude: -0.03004, latitude: 51.64002, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013'},
 		    {route: 'blackberry', longitude: -0.03006, latitude: 51.64004, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013'}
 		],
