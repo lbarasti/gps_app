@@ -100,37 +100,41 @@ html,body,#map-canvas {
 	}
 	
     function refreshJson() {
-	    $.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
+	    //$.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
+	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/demo?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
 	        var oneIsOutside = false;
-	        for ( var i in myObject) {
-	            var ll = new google.maps.LatLng(myObject[i].latitude,myObject[i].longitude)
-	            var delta = howLong(myObject[i].timestamp);
-                var image = getRouteImage(myObject[i].route);
-                
-	            $('#info').append('<img src='+image+'> [' + myObject[i].route + '] last reported ['+formatinHMS(delta)+'] ago');
-	            
-	            var route = myObject[i].route;
-	            var marker = markers[route];
-                //$('#info').append('<li>[marker='+marker+']</li>');
-	            if (marker === null || marker === undefined) {
-		            marker = new google.maps.Marker({
-		                position : ll,
-		                map : map,
-		                title : route,
-		                icon: image
-		            });
-		            markers[route] = marker;
-	            } else {
-	            	marker.setPosition(ll);
-	            }
-	            if (!normalBounds.contains(ll)) {
-	            	oneIsOutside = true;
-	                $('#info').append(' and is outside the normal (shaded) area');
-	            }
-	            $('#info').append('<br>');
+	        for ( var array in myObject) {
+	        	// for ( var i in array) {
+	        		var i = array[0]
+		            var ll = new google.maps.LatLng(myObject[i].latitude,myObject[i].longitude)
+		            var delta = howLong(myObject[i].timestamp);
+	                var image = getRouteImage(myObject[i].route);
+	                
+		            //$('#info').append('<img src='+image+'> [' + myObject[i].route + '] last reported ['+formatinHMS(delta)+'] ago');
+		            
+		            var route = myObject[i].route;
+		            var marker = markers[route];
+	                //$('#info').append('<li>[marker='+marker+']</li>');
+		            if (marker === null || marker === undefined) {
+			            marker = new google.maps.Marker({
+			                position : ll,
+			                map : map,
+			                title : route,
+			                icon: image
+			            });
+			            markers[route] = marker;
+		            } else {
+		            	marker.setPosition(ll);
+		            }
+		            if (!normalBounds.contains(ll)) {
+		            	oneIsOutside = true;
+		                $('#info').append(' and is outside the normal (shaded) area');
+		            }
+		            $('#info').append('<br>');
+		        // }
 	        }
 	        
 	        if (myObject.length == 0) {
