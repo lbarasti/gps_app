@@ -86,10 +86,11 @@ post '/post/:channel' do
 		#set to empty array if not exist...
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
 	#limit the size of the history array
-	    puts ('monkey '+@@data[params[:channel].to_sym][:history][params[:route]].class.name)
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
 
-		if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 3) {
+		l = @@data[params[:channel].to_sym][:history][params[:route]].length
+		puts("l="+l)
+		if (l > 3) {
 			# @@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(3)
 		}
 	}
