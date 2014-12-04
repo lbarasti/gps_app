@@ -12,11 +12,36 @@ https://developers.google.com/maps/documentation/javascript/examples/marker-simp
 <title>Ben's BusTracker</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
-<style>
-html,body,#map-canvas {
+<!-- TODO 100% height map with semi-transparent info overlay. the css below just about manages it but with a defined number of pixels height for the map -->
+<style type="text/css">
+html,body {
 	height: 100%;
+    width: 100%;
 	margin: 0px;
 	padding: 0px
+}
+#container {
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    max-height: 1080px;
+    position: relative;
+}
+#map-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#info {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    opacity: 0.7;
 }
 </style>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
@@ -121,7 +146,8 @@ html,body,#map-canvas {
 	}
 	
     function refreshJson() {
-	    $.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
+	    //$.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
+	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
@@ -176,16 +202,16 @@ html,body,#map-canvas {
 
 		        if (rlabel && recent && recent > 60) {
 		        	var image = getRouteImage(rlabel, 0);
-		        	$('#info').append('<br><img src='+image+'> last reported '+formatinHMS(recent)+' ago...?');
+		        	$('#info').append('<img src='+image+'> last reported '+formatinHMS(recent)+' ago...? ');
 		        }
 	        }
 
 	        if (oneIsOutside) {
-	        	$('#info').append('<br>NB: some abnormal location readings');
+	        	$('#info').append('NB: some abnormal location readings. ');
 	        }
 	        
 	        if (totlength == 0) {
-	            $('#info').append('<br>There is no bus info!');
+	            $('#info').append('There is no bus info!');
 	        }
             
             if (oneIsOutside) {
@@ -193,7 +219,7 @@ html,body,#map-canvas {
             } else {
                 normalZone.setMap(null);
             }
-	        $('#info').append('</p><br>');
+	        $('#info').append('</p>');
 	    });
     }
 
@@ -208,10 +234,9 @@ html,body,#map-canvas {
 </script>
 </head>
 <body>
-	<div id="info" style="background-color: #EEE;"></div>
-	<div id="controls" style="background-color: #EEE;">
-		<!-- <input type="button" id="driver" value="Refresh" /> -->
+	<div id="container">
+		<div id="info" style="background-color: #EEE;"></div>
+		<div id="map-canvas"></div>
 	</div>
-	<div id="map-canvas"></div>
 </body>
 </html>
