@@ -88,7 +88,7 @@ post '/post/:channel' do
 	#limit the size of the history array
 		@@data[params[:channel].to_sym][:history][params[:route]] << reading
 		if ((@@data[params[:channel].to_sym][:history][params[:route]]).length > 10) {
-			@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
+			@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(10)
 		}
 	}
 end
