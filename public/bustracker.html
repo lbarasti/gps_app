@@ -121,8 +121,7 @@ html,body,#map-canvas {
 	}
 	
     function refreshJson() {
-	    //$.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
-	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
+	    $.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
