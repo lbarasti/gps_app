@@ -85,14 +85,14 @@ post '/post/:channel' do
 		#HISTORY
 		#set to empty array if not exist...
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
-	#limit the size of the history array
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
 
-		l = @@data[params[:channel].to_sym][:history][params[:route]].length
-		puts("l="+l)
-		if (l > 3) {
-			# @@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(3)
-		}
+		#TODO: limit the size of the history array. the stuff below crashes the server...
+		# l = @@data[params[:channel].to_sym][:history][params[:route]].length
+		# puts("l="+l)
+		# if (l > 3) {
+		# 	# @@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(3)
+		# }
 	}
 end
 
