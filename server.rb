@@ -89,9 +89,9 @@ post '/post/:channel' do
 	    puts ('monkey '+@@data[params[:channel].to_sym][:history][params[:route]].class.name)
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
 
-		# if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 10) {
+		if (@@data[params[:channel].to_sym][:history][params[:route]].length > 10) {
 			#@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(10)
-		# }
+		}
 	}
 end
 
