@@ -86,7 +86,7 @@ post '/post/:channel' do
 		#set to empty array if not exist...
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
 	#limit the size of the history array
-		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
+		@@data[params[:channel].to_sym][:history][params[:route]] << reading
 		# if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 10) {
 		# 	@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
 		# }
