@@ -59,6 +59,13 @@ html,body {
 	id_to_png['HTC Desire S'] = 'red';
 	id_to_png['strawberry'] = 'red';
 
+	var id_to_clr = {};
+	id_to_clr['HTC Desire C'] = '#111';
+	id_to_clr['GT-I8190N'] = '#111';
+	id_to_clr['blackberry'] = '#111';
+	id_to_clr['HTC Desire S'] = '#D11';
+	id_to_clr['strawberry'] = '#D11';
+
 	// map borders
     var maxLat = 51.7757;
     var minLat = 51.755117;
@@ -80,6 +87,7 @@ html,body {
 	var llTitan = new google.maps.LatLng(51.762488, -0.243518);
 	var map;
 	var markers = new Array();
+	var lines = new Array();
 	var max_trail = 5;
 	
 	function initialize() {
@@ -144,6 +152,19 @@ html,body {
 		var iconn = colour + aa + suffix
 		return iconn
 	}
+
+	function getOpacity(n) {
+		var i = 2
+		if (n < i) {
+			return 0.4
+		} else if (n < i+1) {
+			return 0.3
+		} else if (n < i+2) {
+			return 0.2
+		} else {
+			return 0.1
+		}
+	}
 	
     function refreshJson() {
 	    $.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
@@ -188,21 +209,39 @@ html,body {
 	        			var oldObject = array[nr-1]
 		                var oldll = new google.maps.LatLng(oldObject.latitude,oldObject.longitude)
 		                //TODO draw or re-draw lines?
+		                if (lines[route]) {
+			            	lines[route].setMap(null)
+			            }
+			            var op = getOpacity(nr)
+			            var colour = id_to_clr[rlabel] || '#1D1';
+			            
+			            var line = new google.maps.Polyline({
+					       path: [oldll, ll],
+					       strokeColor:colour,
+					       strokeOpacity:op,
+					       strokeWeight:2,
+					       map: map
+					    });
+			            lines[route] = line
 		            }
+		            
 		        }
 
 				//remove old markers
 		        if (rlabel) {
 			        for (var remn = array.length; markers[rlabel+remn] && (remn < max_trail); remn++) {
-			        	var marker = markers[rlabel+remn]
+			        	var rid = rlabel+remn
+			        	var marker = markers[rid]
 			        	marker.setMap(null)
 			        	//TODO remove old lines if drawn...
+			        	var line = lines[rid]
+			        	line.setMap(null)
 			        }
 			    }
 
 		        if (rlabel && recent && recent > 60) {
 		        	var image = getRouteImage(rlabel, 0);
-		        	$('#info').append('<img src='+image+'> last reported '+formatinHMS(recent)+' ago...? ');
+		        	$('#info').append('<img src='+image+'> last reported '+formatinHMS(recent)+' ago...<br>');
 		        }
 	        }
 
