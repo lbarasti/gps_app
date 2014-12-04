@@ -122,14 +122,14 @@ html,body,#map-canvas {
 	
     function refreshJson() {
 	    //$.getJSON('http://agile-journey-4782.herokuapp.com/getdata/ocado?callback=?', function(jd) {
-	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/demo?callback=?', function(jd) {
+	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
 	        var oneIsOutside = false;
 	        var totlength = myObject.length
 	        for (var na = 0; na < myObject.length; na++) {
-	        	var array = myObject[na].sort(function (r0,r1) {return r0.timestamp.localeCompare(r1.timestamp)}); // hacky compare relies on strings...
+	        	var array = myObject[na].sort(function (r0,r1) {return r1.timestamp.localeCompare(r0.timestamp)}); // hacky compare relies on strings...
 	        	var rlabel
 	        	var recent
 	        	totlength = totlength + array.length
