@@ -138,7 +138,7 @@ html,body,#map-canvas {
 	        		rlabel = i
 		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
 		            var delta = howLong(myInnerObject.timestamp);
-	        		if (!recent || recent > delta) {recent = delta;}
+	        		if (!recent || recent < delta) {recent = delta;}
 	                var image = getRouteImage(i, nr);
 		            var route = i + nr;
 		            var marker = markers[route];
