@@ -55,6 +55,7 @@ html,body,#map-canvas {
 	var llTitan = new google.maps.LatLng(51.762488, -0.243518);
 	var map;
 	var markers = new Array();
+	var max_trail = 5;
 	
 	function initialize() {
 
@@ -126,20 +127,22 @@ html,body,#map-canvas {
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
 	        var oneIsOutside = false;
+	        var totlength = myObject.length
 	        for (var na = 0; na < myObject.length; na++) {
-	        	var array = myObject[na]
-	        	for (var nr = 0; nr < array.length; nr++) {
+	        	var array = myObject[na].sort(function (r0,r1) {return r0.timestamp.localeCompare(r1.timestamp)}); // hacky compare relies on strings...
+	        	var rlabel
+	        	var recent
+	        	totlength = totlength + array.length
+	        	for (var nr = 0; nr < array.length && nr < max_trail; nr++) {
 	        		var myInnerObject = array[nr]
 	        		var i = myInnerObject.route
+	        		rlabel = i
 		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
 		            var delta = howLong(myInnerObject.timestamp);
+	        		if (!recent || recent > delta) {recent = delta;}
 	                var image = getRouteImage(myInnerObject.route, nr);
-	                
-		            //$('#info').append('<img src='+image+'> [' + myInnerObject.route + '] last reported ['+formatinHMS(delta)+'] ago');
-		            
 		            var route = myInnerObject.route + nr;
 		            var marker = markers[route];
-	                //$('#info').append('<li>[marker='+marker+']</li>');
 		            if (marker === null || marker === undefined) {
 			            marker = new google.maps.Marker({
 			                position : ll,
@@ -153,14 +156,20 @@ html,body,#map-canvas {
 		            }
 		            if (!normalBounds.contains(ll)) {
 		            	oneIsOutside = true;
-		                $('#info').append(route + ' is outside the normal (shaded) area');
 		            }
-		            $('#info').append('<br>');
+		        }
+		        if (rlabel && recent && recent > 60) {
+		        	var image = getRouteImage(rlabel, 0);
+		        	$('#info').append('<br><img src='+image+'> last reported '+formatinHMS(recent)+' ago...?');
 		        }
 	        }
+
+	        if (oneIsOutside) {
+	        	$('#info').append('<br>NB: some abnormal location readings');
+	        }
 	        
-	        if (myObject.length == 0) {
-	            $('#info').append('There is no bus info - maybe the phones are off...');
+	        if (totlength == 0) {
+	            $('#info').append('<br>There is no bus info!');
 	        }
             
             if (oneIsOutside) {
