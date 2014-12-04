@@ -70,7 +70,7 @@ post '/post/:channel' do
 
 	@@data_lock.synchronize{
 		#@@data[params[:channel].to_sym] ||= {routes:{}, info:{}} # we'll deal with initialisation elsewhere
-		@@data[params[:channel].to_sym][:routes][params[:route]] = {
+		reading = {
 			route: params[:route],
 			longitude: params[:longitude],
 			latitude: params[:latitude],
@@ -78,6 +78,9 @@ post '/post/:channel' do
 			last_restarted: params[:last_restarted],
 			accuracy: params[:accuracy]
 		}
+		@@data[params[:channel].to_sym][:routes][params[:route]] = reading
+		#TODO: push the data above into the history array, which should be some sort of rotating array to some sort of maximum number of readings
+		@@data[params[:channel].to_sym][:history][params[:route]] push reading
 	}
 end
 
