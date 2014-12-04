@@ -106,16 +106,18 @@ html,body,#map-canvas {
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
 	        var oneIsOutside = false;
-	        for ( var array in myObject) {
-	        	// for ( var i in array) {
-	        		var i = array[0]
-		            var ll = new google.maps.LatLng(myObject[i].latitude,myObject[i].longitude)
-		            var delta = howLong(myObject[i].timestamp);
-	                var image = getRouteImage(myObject[i].route);
+	        for (var na = 0; na < myObject.length; na++) {
+	        	var array = myObject[na]
+	        	for (var nr = 0; nr < array.length; nr++) {
+	        		var myInnerObject = array[nr]
+	        		var i = myInnerObject.route
+		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
+		            var delta = howLong(myInnerObject.timestamp);
+	                var image = getRouteImage(myInnerObject.route);
 	                
-		            //$('#info').append('<img src='+image+'> [' + myObject[i].route + '] last reported ['+formatinHMS(delta)+'] ago');
+		            //$('#info').append('<img src='+image+'> [' + myInnerObject.route + '] last reported ['+formatinHMS(delta)+'] ago');
 		            
-		            var route = myObject[i].route;
+		            var route = myInnerObject.route + nr;
 		            var marker = markers[route];
 	                //$('#info').append('<li>[marker='+marker+']</li>');
 		            if (marker === null || marker === undefined) {
@@ -131,10 +133,10 @@ html,body,#map-canvas {
 		            }
 		            if (!normalBounds.contains(ll)) {
 		            	oneIsOutside = true;
-		                $('#info').append(' and is outside the normal (shaded) area');
+		                $('#info').append(route + ' is outside the normal (shaded) area');
 		            }
 		            $('#info').append('<br>');
-		        // }
+		        }
 	        }
 	        
 	        if (myObject.length == 0) {
