@@ -27,16 +27,16 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 	},
 	info: {a: 'Station', b: 'Ocado'},
 	history: {
-		blackberry: {
+		blackberry: [
 		    {route: 'blackberry', longitude: -0.230, latitude: 51.76401, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
 		    {route: 'blackberry', longitude: -0.231, latitude: 51.76405, timestamp: 'Thu Oct 17 21:51:20 GMT+01:00 2013'},
 		    {route: 'blackberry', longitude: -0.232, latitude: 51.76411, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013'},
 		    {route: 'blackberry', longitude: -0.233, latitude: 51.76430, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013'}
-		},
-		strawberry: {
+		],
+		strawberry: [
 		    {route: 'strawberry', longitude: -0.229, latitude: 51.76400, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013'},
 		    {route: 'strawberry', longitude: -0.228, latitude: 51.76395, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013'}
-		}
+		]
 	},
 } #if settings.environment == :development
 
