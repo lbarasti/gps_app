@@ -78,13 +78,16 @@ post '/post/:channel' do
 			last_restarted: params[:last_restarted],
 			accuracy: params[:accuracy]
 		}
+
+		#DATA
 		@@data[params[:channel].to_sym][:routes][params[:route]] = reading
 
+		#HISTORY
 		#set to empty array if not exist...
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
-		#limit the size of the array
+	#limit the size of the history array
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
-		if (@@data[params[:channel].to_sym][:history][params[:route]].length > 10) {
+		if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 10) {
 			@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
 		}
 	}
