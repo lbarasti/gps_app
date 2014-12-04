@@ -80,6 +80,9 @@ post '/post/:channel' do
 		}
 		@@data[params[:channel].to_sym][:routes][params[:route]] = reading
 		#TODO: push the data above into the history array, which should be some sort of rotating array to some sort of maximum number of readings
+
+		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
+		@@data[params[:channel].to_sym][:history][params[:route]] << reading
 	}
 end
 
