@@ -12,6 +12,7 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 @@data_lock = Mutex.new
 @@data = {}
 @@last_img_url = nil
+@@max_history = 10
 
 @@data[:ocado] = {
 	routes: {},
@@ -89,8 +90,8 @@ post '/post/:channel' do
 
 		#TODO: limit the size of the history array. the stuff below crashes the server...
 		l = @@data[params[:channel].to_sym][:history][params[:route]].length
-		if (l > 3) 
-			@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(3)
+		if (l > @@max_history) 
+			@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(@@max_history)
 		end 
 	}
 end
