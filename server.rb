@@ -88,8 +88,8 @@ post '/post/:channel' do
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
 
 		#TODO: limit the size of the history array. the stuff below crashes the server...
-		# l = @@data[params[:channel].to_sym][:history][params[:route]].length
-		# puts("l="+l)
+		l = @@data[params[:channel].to_sym][:history][params[:route]].length
+		puts("l="+l)
 		# if (l > 3) {
 		# 	# @@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(3)
 		# }
