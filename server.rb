@@ -87,9 +87,9 @@ post '/post/:channel' do
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
 	#limit the size of the history array
 		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
-		if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 10) {
-			@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
-		}
+		# if (@@data[params[:channel].to_sym][:history][params[:route]].values.length > 10) {
+		# 	@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
+		# }
 	}
 end
 
