@@ -12,23 +12,50 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 @@data_lock = Mutex.new
 @@data = {}
 @@last_img_url = nil
+@@max_history = 10
 
 @@data[:ocado] = {
 	routes: {},
-	info: {}
+	info: {},
+	history: {}
 }
 
+# hatfield centre: 51.7639267,-0.2135151
 @@data[:demo] = {
 	routes: {
 		blackberry: {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013'},
 		strawberry: {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013'}
 	},
-	info: {a: 'Station', b: 'Ocado'}
+	info: {a: 'Station', b: 'Ocado'},
+	history: {
+		blackberry: [
+		    {route: 'blackberry', longitude: -0.235, latitude: 51.7635, timestamp: 'Thu Oct 17 21:51:35 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.230, latitude: 51.7630, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.245, latitude: 51.7645, timestamp: 'Thu Oct 17 21:51:45 GMT+01:00 2013'},
+		    {route: 'blackberry', longitude: -0.240, latitude: 51.7640, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013'}
+		],
+		strawberry: [
+		    {route: 'strawberry', longitude: -0.220, latitude: 51.76400, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013'},
+		    {route: 'strawberry', longitude: -0.250, latitude: 51.76395, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013'}
+		]
+	},
 } #if settings.environment == :development
 
 get '/getdata/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
 	data = @@data[params[:channel].to_sym][:routes].values.to_json
+	if request["callback"]
+		content_type 'text/plain'
+		"#{request["callback"]}(#{data})"
+	else
+		content_type :json
+		data
+	end
+end
+
+get '/gethistory/:channel' do
+	halt(404) if @@data[params[:channel].to_sym].nil?
+	data = @@data[params[:channel].to_sym][:history].values.to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
@@ -44,7 +71,7 @@ post '/post/:channel' do
 
 	@@data_lock.synchronize{
 		#@@data[params[:channel].to_sym] ||= {routes:{}, info:{}} # we'll deal with initialisation elsewhere
-		@@data[params[:channel].to_sym][:routes][params[:route]] = {
+		reading = {
 			route: params[:route],
 			longitude: params[:longitude],
 			latitude: params[:latitude],
@@ -52,6 +79,20 @@ post '/post/:channel' do
 			last_restarted: params[:last_restarted],
 			accuracy: params[:accuracy]
 		}
+
+		#DATA
+		@@data[params[:channel].to_sym][:routes][params[:route]] = reading
+
+		#HISTORY
+		#set to empty array if not exist...
+		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
+		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
+
+		#TODO: limit the size of the history array. the stuff below crashes the server...
+		l = @@data[params[:channel].to_sym][:history][params[:route]].length
+		if (l > @@max_history) 
+			@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(@@max_history)
+		end 
 	}
 end
 
