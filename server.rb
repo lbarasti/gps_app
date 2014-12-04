@@ -79,10 +79,14 @@ post '/post/:channel' do
 			accuracy: params[:accuracy]
 		}
 		@@data[params[:channel].to_sym][:routes][params[:route]] = reading
-		#TODO: push the data above into the history array, which should be some sort of rotating array to some sort of maximum number of readings
 
+		#set to empty array if not exist...
 		@@data[params[:channel].to_sym][:history][params[:route]] ||= []
-		@@data[params[:channel].to_sym][:history][params[:route]] << reading
+		#limit the size of the array
+		@@data[params[:channel].to_sym][:history][params[:route]].unshift(reading)
+		if (@@data[params[:channel].to_sym][:history][params[:route]].length > 10) {
+			@@data[params[:channel].to_sym][:history][params[:route]] = @@data[params[:channel].to_sym][:history][params[:route]].take(10)
+		}
 	}
 end
 
