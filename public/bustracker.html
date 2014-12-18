@@ -112,6 +112,7 @@ html,body {
 			title : 'Titan'
 		});
 
+        refreshJson();
 	    setInterval(refreshJson, 11500);
 	}
 	
@@ -177,7 +178,7 @@ html,body {
 	        for (var na = 0; na < myObject.length; na++) {
 	        	var array = myObject[na].sort(function (r0,r1) {return r1.timestamp.localeCompare(r0.timestamp)}); // hacky compare relies on strings...
 	        	var rlabel
-	        	var recent
+	        	var recent = undefined
 	        	totlength = totlength + array.length
 	        	for (var nr = 0; nr < array.length && nr < max_trail; nr++) {
 	        		var myInnerObject = array[nr]
