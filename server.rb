@@ -55,7 +55,10 @@ end
 
 get '/gethistory/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
-	data = @@data[params[:channel].to_sym][:history].values.to_json
+
+	thetime = Time.now.utc.to_i # time in SECONDS
+	#ugly insertion of age
+	data = @@data[params[:channel].to_sym][:history].values.map {|x| x.map {|n| n.merge({:age => (thetime-n[:serverseconds])})} }.to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
