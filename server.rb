@@ -43,7 +43,7 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 
 get '/getdata/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
-	data = @@data[params[:channel].to_sym][:routes].values.to_json
+	data = @@data[params[:channel].to_sym][:routes].values.map {|x| x.map {|n| n.merge({:age => (thetime-n[:serverseconds])})} }.to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
