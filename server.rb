@@ -23,20 +23,20 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 # hatfield centre: 51.7639267,-0.2135151
 @@data[:demo] = {
 	routes: {
-		blackberry: {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013', serverseconds: 1418896959},
-		strawberry: {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418896959}
+		blackberry: {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013', serverseconds: 1418902684},
+		strawberry: {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418902684}
 	},
 	info: {a: 'Station', b: 'Ocado'},
 	history: {
 		blackberry: [
-		    {route: 'blackberry', longitude: -0.235, latitude: 51.7635, timestamp: 'Thu Oct 17 21:51:35 GMT+01:00 2013', serverseconds: 1418896959},
-		    {route: 'blackberry', longitude: -0.230, latitude: 51.7630, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013', serverseconds: 1418896949},
+		    {route: 'blackberry', longitude: -0.235, latitude: 51.7635, timestamp: 'Thu Oct 17 21:51:35 GMT+01:00 2013', serverseconds: 1418902684},
+		    {route: 'blackberry', longitude: -0.230, latitude: 51.7630, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013', serverseconds: 1418902674},
 		    {route: 'blackberry', longitude: -0.245, latitude: 51.7645, timestamp: 'Thu Oct 17 21:51:45 GMT+01:00 2013', serverseconds: 1418896929},
 		    {route: 'blackberry', longitude: -0.240, latitude: 51.7640, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013', serverseconds: 1418896159}
 		],
 		strawberry: [
-		    {route: 'strawberry', longitude: -0.220, latitude: 51.76400, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418893959},
-		    {route: 'strawberry', longitude: -0.250, latitude: 51.76395, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013', serverseconds: 1418892959}
+		    {route: 'strawberry', longitude: -0.220, latitude: 51.76400, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418900000},
+		    {route: 'strawberry', longitude: -0.250, latitude: 51.76395, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013', serverseconds: 1418899000}
 		]
 	},
 } #if settings.environment == :development

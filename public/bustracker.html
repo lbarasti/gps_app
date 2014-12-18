@@ -185,7 +185,7 @@ html,body {
 	        		rlabel = i
 		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
 		            console.log("checking for age: " + myInnerObject.age)
-		            var delta = howLong(myInnerObject.timestamp);
+		            var delta = myInnerObject.age //howLong(myInnerObject.timestamp);
 	        		if (!recent || recent > delta) {recent = delta;}
 	                var image = getRouteImage(i, nr);
 		            var route = i + nr;
