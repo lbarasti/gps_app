@@ -112,7 +112,7 @@ html,body {
 			title : 'Titan'
 		});
 
-	    setInterval(refreshJson, 2200);
+	    setInterval(refreshJson, 11500);
 	}
 	
 	function howLong(tsString) {
@@ -167,8 +167,8 @@ html,body {
 	}
 	
     function refreshJson() {
-	    $.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
-	    //$.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
+	    //$.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
+	    $.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
@@ -184,6 +184,7 @@ html,body {
 	        		var i = myInnerObject.route
 	        		rlabel = i
 		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
+		            console.log("checking for age: " + myInnerObject.age)
 		            var delta = howLong(myInnerObject.timestamp);
 	        		if (!recent || recent > delta) {recent = delta;}
 	                var image = getRouteImage(i, nr);
