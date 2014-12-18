@@ -112,7 +112,8 @@ html,body {
 			title : 'Titan'
 		});
 
-	    setInterval(refreshJson, 2200);
+        refreshJson();
+	    setInterval(refreshJson, 11500);
 	}
 	
 	function howLong(tsString) {
@@ -168,7 +169,6 @@ html,body {
 	
     function refreshJson() {
 	    $.getJSON('http://agile-journey-4782.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
-	    //$.getJSON('http://vast-springs-1335.herokuapp.com/gethistory/ocado?callback=?', function(jd) {
 	        var now = new Date();
 	        var myObject = eval(jd);
 	        $('#info').html('Server last checked at ['+now+']<p>');
@@ -177,14 +177,15 @@ html,body {
 	        for (var na = 0; na < myObject.length; na++) {
 	        	var array = myObject[na].sort(function (r0,r1) {return r1.timestamp.localeCompare(r0.timestamp)}); // hacky compare relies on strings...
 	        	var rlabel
-	        	var recent
+	        	var recent = undefined
 	        	totlength = totlength + array.length
 	        	for (var nr = 0; nr < array.length && nr < max_trail; nr++) {
 	        		var myInnerObject = array[nr]
 	        		var i = myInnerObject.route
 	        		rlabel = i
 		            var ll = new google.maps.LatLng(myInnerObject.latitude,myInnerObject.longitude)
-		            var delta = howLong(myInnerObject.timestamp);
+		            console.log("checking for age: " + myInnerObject.age)
+		            var delta = myInnerObject.age //howLong(myInnerObject.timestamp);
 	        		if (!recent || recent > delta) {recent = delta;}
 	                var image = getRouteImage(i, nr);
 		            var route = i + nr;
