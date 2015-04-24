@@ -14,7 +14,7 @@ class Bus
 
 black = new Bus 'black', '#111'
 red = new Bus 'red', '#D11'
-red = new Bus 'green', '#1D1'
+green = new Bus 'green', '#1D1'
 
 getBusForPhone = (phone) ->
   switch phone
@@ -41,7 +41,7 @@ centerY = -0.230
 maxTrail = 5
 jsonRefreshInterval = 11500
 msPerSecond = 1000
-dataUrl = "http://agile-journey-4782.herokuapp.com/gethistory/#{encodeURIComponent mode}?callback=?"
+dataUrl = "/gethistory/#{encodeURIComponent mode}?callback=?"
 
 llStation = new LatLng stationX, stationY
 llTitan = new LatLng titanX, titanY
@@ -51,24 +51,26 @@ tr = new LatLng maxLat, maxLng
 normalBounds = new LatLngBounds bl, tr
 
 getRouteImage = (deviceId, n) ->
-  (getBusForPhone(deviceId).getPng() or 'green') + getAlphaString(n) + '.png'
+  debugger
+  '/' + (getBusForPhone(deviceId).getPng() or 'green') + getAlphaString(n) + '.png'
 
 #polyfill
 zip = (left, right) -> [a, right[i]] for a, i in left
 
-jsonHdlr = (jd, map, markers, lines, old) ->
+
+# TODO split up this function, it is too long
+jsonHdlr = (myObject, map, markers, lines, old) ->
 
   $('#last-checked').text new Date
-  myObject = eval jd
-  totlength = myObject.length
+
   outsideArray = for unsortedArray in myObject
     array = unsortedArray.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
     zippedArray = zip array, [undefined, array...]
     relevant = zippedArray.slice 0, maxTrail
-    for [myInnerObject, oldObject], nr in relevant
+    out = for [myInnerObject, oldObject], nr in relevant
       rlabel = myInnerObject.route
       ll = new LatLng myInnerObject.latitude, myInnerObject.longitude
-      delta = myInnerObject.age
+      delta = myInnerObject.age # in what?
       console.log "checking for age: " + delta
       image = getRouteImage rlabel, nr
       route = rlabel + nr
@@ -94,27 +96,45 @@ jsonHdlr = (jd, map, markers, lines, old) ->
         lines[route] = line
       [delta, not normalBounds.contains ll]
 
-    if (lastRlabel = relevant[relevant.length - 1][0].route)
+    reductor = (last, [next, _]) ->
+      if last and next
+        Math.max(last, next)
+      else
+        last or next
+    
+    recent = out.reduce reductor, undefined
+
+    if (lastRlabel = relevant[relevant.length - 1][0].route) # when does this not hold
+      color = getBusForPhone(lastRlabel).getPng()
       markersLines = zip(lines, markers).slice((start = array.length), start + maxTrail)
       for [line, marker] in markersLines
         marker?.setMap(null)
         line?.setMap(null)
+      if recent and recent > 60
+        image = getRouteImage lastRlabel, 0
+        $("##{color}").addClass('late').removeClass('on-time')
+        $("##{color}").find('.time').text(formatInHms recent)
+      else
+        $("##{color}").addClass('on-time').removeClass('late')
+
+    out
 
   flattenedOutsideArray = outsideArray.reduce ((a, b) -> a.concat(b)), []
-  oneIsOutside = flattenedOutsideArray.some(([_, b]) -> b)
-  reductor = (last, [next, _]) ->
-    if last and next
-      Math.max(last, next)
+  if(totLength = flattenedOutsideArray.length)
+    $("#missing-bus-info").addClass("hide").removeClass("show")
+    if(oneIsOutside = flattenedOutsideArray.some(([_, b]) -> b))
+      normalZone.setMap map
+      $("#one-is-outside").addClass("show").removeClass("hide")
     else
-      last or next
-    
-  recent = flattenedOutsideArray.reduce reductor
+      normalZone.setMap null
+      $("#one-is-outside").addClass("hide").removeClass("show")
+  else
+    $("#missing-bus-info").addClass("show").removeClass("hide")
 
-  if lastRlabel and recent and recent > 60
-    image = getRouteImage lastRlabel, 0
-    #TODO injection...
-    $('#info')
-      .append('<img src='+image+'> last reported '+formatinHMS(recent)+' ago...<br>')
+  nEw = new Date
+  delay = Math.max(jsonRefreshInterval - (nEw - old), 0)
+  setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, markers, lines, nEw), delay
+
 
 initialize = ->
   mapOptions =
@@ -123,25 +143,35 @@ initialize = ->
   
   map = new Map $('#mapcanvas').get(0), mapOptions
   now = new Date
+  new Marker
+    position: llStation
+    map: map
+    title: 'Station'
+
+  new Marker
+    position: llTitan
+    map: map
+    title: 'Titan'
+
   $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, [], [], now)
 
-howLongSeconds = (tsString) -> ~~((Date.now() - Date.parse(tsString)) / msPerSecond)
-  
+
 # XXX is there a better way?
-formatInHMS = (seconds) ->
+# eg Date::toLocaleString ?
+formatInHms = (seconds) ->
   hms = [~~(seconds / 3600), ~~((seconds / 60) % 60), seconds % 60]
   [hstr, mstr, sstr] = (("0" + n).slice(-2) for n in hms)
   hstr + ':' + mstr + ':' + sstr
 
 getAlphaString = (n) ->
-  switch n
+  switch
     when n < 1 then ''
     when n < 2 then '75'
     when n < 3 then '50'
     else '25'
 
 getOpacity = (n) ->
-  switch n
+  switch
     when n < 2 then 0.4
     when n < 3 then 0.3
     when n < 4 then 0.2
