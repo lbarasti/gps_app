@@ -1,1 +1,6 @@
 *.*~
+*.swp
+public/html
+public/js
+public/css
+fe/node_modules
