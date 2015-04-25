@@ -24,27 +24,77 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 # hatfield centre: 51.7639267,-0.2135151
 @@data[:demo] = {
 	routes: {
-		blackberry: {route: 'blackberry', longitude: -0.03, latitude: 51.64, timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013', serverseconds: 1418902684},
-		strawberry: {route: 'strawberry', longitude: -0.15, latitude: 54.22, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418902684}
+		blackberry: {
+      route: 'blackberry',
+      longitude: -0.03,
+      latitude: 51.64,
+      timestamp: 'Thu Oct 17 21:51:10 GMT+01:00 2013',
+      serverseconds: 1418902684
+    },
+		strawberry: {
+      route: 'strawberry',
+      longitude: -0.15,
+      latitude: 54.22,
+      timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013',
+      serverseconds: 1418902684
+    }
 	},
-	info: {a: 'Station', b: 'Ocado'},
+	info: {
+    a: 'Station',
+    b: 'Ocado'
+  },
 	history: {
 		blackberry: [
-		    {route: 'blackberry', longitude: -0.235, latitude: 51.7635, timestamp: 'Thu Oct 17 21:51:35 GMT+01:00 2013', serverseconds: Time.now.utc.to_i},
-		    {route: 'blackberry', longitude: -0.230, latitude: 51.7630, timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013', serverseconds: 1418902674},
-		    {route: 'blackberry', longitude: -0.245, latitude: 51.7645, timestamp: 'Thu Oct 17 21:51:45 GMT+01:00 2013', serverseconds: 1418896929},
-		    {route: 'blackberry', longitude: -0.240, latitude: 51.7640, timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013', serverseconds: 1418896159}
+		    {
+          route: 'blackberry',
+          longitude: -0.235,
+          latitude: 51.7635,
+          timestamp: 'Thu Oct 17 21:51:35 GMT+01:00 2013',
+          serverseconds: Time.now.utc.to_i
+        }, {
+          route: 'blackberry',
+          longitude: -0.230,
+          latitude: 51.7630,
+          timestamp: 'Thu Oct 17 21:51:30 GMT+01:00 2013',
+          serverseconds: 1418902674
+        }, {
+          route: 'blackberry',
+          longitude: -0.245,
+          latitude: 51.7645,
+          timestamp: 'Thu Oct 17 21:51:45 GMT+01:00 2013',
+          serverseconds: 1418896929
+        }, {
+          route: 'blackberry',
+          longitude: -0.240,
+          latitude: 51.7640,
+          timestamp: 'Thu Oct 17 21:51:40 GMT+01:00 2013',
+          serverseconds: 1418896159
+        }
 		],
 		strawberry: [
-		    {route: 'strawberry', longitude: -0.220, latitude: 51.76400, timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013', serverseconds: 1418900000},
-		    {route: 'strawberry', longitude: -0.250, latitude: 51.76395, timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013', serverseconds: 1418899000}
+		    {
+          route: 'strawberry',
+          longitude: -0.220,
+          latitude: 51.76400,
+          timestamp: 'Thu Oct 17 21:52:11 GMT+01:00 2013',
+          serverseconds: 1418900000
+        }, {
+          route: 'strawberry',
+          longitude: -0.250,
+          latitude: 51.76395,
+          timestamp: 'Thu Oct 17 21:53:11 GMT+01:00 2013',
+          serverseconds: 1418899000
+        }
 		]
 	},
-} #if settings.environment == :development
+}
 
 get '/getdata/:channel' do
 	halt(404) if @@data[params[:channel].to_sym].nil?
-	data = @@data[params[:channel].to_sym][:routes].values.map {|x| x.map {|n| n.merge({:age => (thetime-n[:serverseconds])})} }.to_json
+	data = @@data[params[:channel].to_sym][:routes].values.map {|x|
+    x.map {|n|
+      n.merge({:age => (thetime-n[:serverseconds])})}
+  }.to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
@@ -62,7 +112,7 @@ get '/gethistory/:channel' do
 	data = Hash[@@data[params[:channel].to_sym][:history].map { |k, v|
     newv = v.map { |n|
       n.merge({:age => (thetime-n[:serverseconds])})
-    } 
+    }
     [k, newv]
   }].to_json
 	if request["callback"]
@@ -80,7 +130,6 @@ post '/post/:channel' do
 
 	@@data_lock.synchronize{
 		thetime = Time.now.utc.to_i # time in SECONDS
-		#@@data[params[:channel].to_sym] ||= {routes:{}, info:{}} # we'll deal with initialisation elsewhere
 		reading = {
 			route: params[:route],
 			longitude: params[:longitude],
@@ -101,17 +150,14 @@ post '/post/:channel' do
 
 		#TODO: limit the size of the history array. the stuff below crashes the server...
 		l = @@data[params[:channel].to_sym][:history][params[:route]].length
-		if (l > @@max_history) 
-			@@data[params[:channel].to_sym][:history][params[:route]] = (@@data[params[:channel].to_sym][:history][params[:route]]).take(@@max_history)
-		end 
+		if (l > @@max_history)
+			ch = @@data[params[:channel].to_sym][:history]
+      ch[params[:route]] = (ch[params[:route]]).take(@@max_history)
+		end
 	}
 end
 
-get '/display/:channel' do
-  # TODO how to say I don't care what is channel, but that it might be present?
-  send_file File.join(settings.public_folder, 'bustracker.html')
-end
-get '/displayJS' do
+get '/' do
   send_file File.join(settings.public_folder, 'bustracker.html')
 end
 
@@ -124,10 +170,7 @@ get '/form/:channel' do
     	"text" name="longitude"><br>
     	<label for="latitude">latitude</label>: <input type="text" name="latitude"><br>
     	<label for="timestamp">timestamp</label>: <input type="text" name="timestamp"><br>
-    	<input type="submit">  
-    </form>  
+    	<input type="submit">
+    </form>
     END
-    # redirect '/getdata/#{params[:channel]}'
 end
-
-
