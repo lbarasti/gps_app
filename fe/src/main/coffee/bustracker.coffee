@@ -199,8 +199,7 @@ formatInHms = (seconds) ->
   h = ~~(seconds / secondsPerHour)
   m = ~~((seconds / secondsPerMinute) % minutesPerHour)
   s = seconds % secondsPerMinute
-  [hstr, mstr, sstr] = ("0#{n}".slice -2 for n in [h, m, s])
-  hstr + ':' + mstr + ':' + sstr
+  ("0#{n}".slice -2 for n in [h, m, s]).reduce (a, b) -> a + ':' + b
 
 getAlphaString = (n) ->
   switch
