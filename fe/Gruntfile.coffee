@@ -1,10 +1,18 @@
 module.exports = (grunt) ->
+
   grunt.loadNpmTasks 'grunt-contrib-jade'
   grunt.loadNpmTasks 'grunt-contrib-stylus'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-bower'
+
   grunt.initConfig
+    copy:
+      pngs:
+        src: ['src/main/resources/**/*.png']
+        dest: '../public/png'
     jade:
       index:
         options:
@@ -42,4 +50,4 @@ module.exports = (grunt) ->
       main:
         options:
           base: '../public'
-  grunt.registerTask 'default', ['jade', 'stylus', 'coffee', 'watch']
+  grunt.registerTask 'default', ['jade', 'stylus', 'coffee', 'copy', 'watch']

@@ -1,10 +1,13 @@
 {
+   "name": "bens-bus-tracker",
    "devDependencies": {
      "grunt-contrib-stylus": "~0.6.0",
      "grunt": "~0.4.1",
      "grunt-contrib-coffee": "~0.7.0",
      "grunt-contrib-connect": "0.10.1",
      "grunt-contrib-watch": "0.6.1",
-     "grunt-contrib-jade": "~0.7.0"
+     "grunt-contrib-jade": "~0.7.0",
+     "grunt-bower": "0.18.0",
+     "grunt-contrib-copy": "0.8.0"
    }
 }

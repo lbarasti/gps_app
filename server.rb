@@ -107,6 +107,10 @@ post '/post/:channel' do
 	}
 end
 
+get '/display/:channel' do
+  # TODO how to say I don't care what is channel, but that it might be present?
+  send_file File.join(settings.public_folder, 'bustracker.html')
+end
 get '/displayJS' do
   send_file File.join(settings.public_folder, 'bustracker.html')
 end
@@ -125,45 +129,5 @@ get '/form/:channel' do
     END
     # redirect '/getdata/#{params[:channel]}'
 end
-
-get '/display/:channel' do
-	@data = {}
-	source = @@data[params[:channel].to_sym][:routes].values.first || {}
-
-	thetime = Time.now.utc.to_i # time in SECONDS
-	if (defined?(source[:serverseconds]))
-		datatime = source[:serverseconds]
-	else
-		puts "datatime is not defined, results will be weird"
-		datatime = 0
-	end
-
-	@data[:longitude] = source[:longitude]
-	@data[:latitude] = source[:latitude]
-	@data[:timestamp] = source[:timestamp]
-	@data[:age] = thetime - datatime
-
-	@data[:img_src] = "/map.png"
-	img_url = "http://maps.googleapis.com/maps/api/staticmap?center=51.76714,-0.230977&zoom=14&size=450x250&maptype=roadmap&markers=color:red%7Clabel:B%7C#{@data[:latitude]},#{@data[:longitude]}&markers=color:blue%7C51.76326,-0.216651&markers=color:blue%7C51.762481,-0.243476&markers=color:blue%7C51.770688,-0.243632&sensor=false"
-
-	if @@last_img_url != img_url
-		@data[:img_src] = img_url
-		if settings.environment != :development
-			begin
-				response = open(img_url, HEADERS_HASH)
-				if response.status.first == "200"
-					open File.join('public', 'map.png'),'w' do |file|
-						file << response.read
-					end
-					@@last_img_url = img_url
-				end
-			rescue
-				@data[:error] = "Google doesn't want to serve you this image. Please, try again later."
-			end
-		end
-	end
-	haml :display
-end
-
 
 

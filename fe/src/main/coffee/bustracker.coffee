@@ -10,12 +10,15 @@ mode = 'demo'
 class Route
   constructor: (routeId, colorHex) ->
 
+    throw new Error "No route ID set!" unless routeId
+
     markers = []
     lines = []
+    
     delaySelector = "##{encodeURIComponent routeId}"
 
     getRouteImage = (n) ->
-      '/' + (routeId or 'green') + getAlphaString(n) + '.png'
+      "/png#{encodeURIComponent routeId}#{encodeURIComponent getAlphaString n}.png"
 
     warnAboutDelayedBuses = (recent) ->
       if recent and recent > 60
