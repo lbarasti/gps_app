@@ -5,8 +5,12 @@ LatLngBounds = google.maps.LatLngBounds
 Polyline = google.maps.Polyline
 
 
-#mode = 'ocado'
-mode = 'demo'
+[_..., modeHint] = document.location.pathname.split '/'
+
+mode = switch modeHint
+  when 'ocado' then 'ocado'
+  when 'demo' then 'demo'
+  else 'ocado'
 
 class Route
   constructor: (routeId, colorHex) ->

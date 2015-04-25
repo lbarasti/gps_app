@@ -157,8 +157,12 @@ post '/post/:channel' do
 	}
 end
 
+get '/display/:channel' do
+  send_file File.join(settings.public_folder, '/html/bustracker.html')
+end
+
 get '/' do
-  send_file File.join(settings.public_folder, 'bustracker.html')
+  send_file File.join(settings.public_folder, '/html/bustracker.html')
 end
 
 get '/form/:channel' do
