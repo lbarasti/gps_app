@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'sinatra'
-require 'haml'
 require 'json'
 require 'open-uri'
 require 'thread'
@@ -157,24 +156,16 @@ post '/post/:channel' do
 	}
 end
 
+# TODO disable in prod.
+# Will still be in the public folder even if this get is not forwarded
+get '/form/:channel' do
+  send_file File.join(settings.public_folder, '/html/backdoor.html')
+end
+
 get '/display/:channel' do
   send_file File.join(settings.public_folder, '/html/bustracker.html')
 end
 
 get '/' do
   send_file File.join(settings.public_folder, '/html/bustracker.html')
-end
-
-get '/form/:channel' do
-	content_type :html
-	<<-END
-	<form action="/post/#{params[:channel]}" method="post">
-    	<label for="route">route</label>: <input type="text" name="route"><br>
-    	<label for="longitude">longitude</label>: <input type=
-    	"text" name="longitude"><br>
-    	<label for="latitude">latitude</label>: <input type="text" name="latitude"><br>
-    	<label for="timestamp">timestamp</label>: <input type="text" name="timestamp"><br>
-    	<input type="submit">
-    </form>
-    END
 end

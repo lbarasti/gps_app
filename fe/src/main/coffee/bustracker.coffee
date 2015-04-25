@@ -7,10 +7,9 @@ Polyline = google.maps.Polyline
 
 [_..., modeHint] = document.location.pathname.split '/'
 
-mode = switch modeHint
-  when 'ocado' then 'ocado'
-  when 'demo' then 'demo'
-  else 'ocado'
+channels = ['ocado', 'demo']
+[_..., modeHint] = document.location.pathname.split '/'
+mode = if modeHint in channels then modeHint else 'ocado'
 
 class Route
   constructor: (routeId, colorHex) ->
@@ -214,6 +213,6 @@ getOpacity = (n) ->
     when n < 4 then 0.2
     else 0.1
 
-window.onload = initialize
+@onload = initialize
 
 

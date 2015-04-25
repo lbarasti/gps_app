@@ -1,7 +1,0 @@
-/ %p== #{"#{[@data[:latitude],@data[:longitude]].join(" ")}"}
-%p== last update: #{@data[:timestamp]}
-- if settings.environment == :development
-	#{@data[:img_src]}
-- else
-	<img src="#{@data[:img_src]}">
-%p== #{@data[:error] || ""}
