@@ -7,23 +7,91 @@ Polyline = google.maps.Polyline
 #mode = 'ocado'
 mode = 'demo'
 
-class Bus
-  constructor: (png, clr) ->
-    @getPng = -> png
-    @getClr = -> clr
+class Route
+  constructor: (routeId, colorHex) ->
 
-black = new Bus 'black', '#111'
-red = new Bus 'red', '#D11'
-green = new Bus 'green', '#1D1'
+    markers = []
+    lines = []
+    delaySelector = "##{encodeURIComponent routeId}"
 
-getBusForPhone = (phone) ->
-  switch phone
-    when "HTC Desire C" then black
-    when "GT-I8190N" then black
-    when "blackberry" then black
-    when "HTC Desire S" then red
-    when "strawberry" then red
-    else green
+    getRouteImage = (n) ->
+      '/' + (routeId or 'green') + getAlphaString(n) + '.png'
+
+    warnAboutDelayedBuses = (recent) ->
+      if recent and recent > 60
+        image = getRouteImage 0
+        $(delaySelector).addClass('late').removeClass('on-time')
+        $(delaySelector).find('.time').text(formatInHms recent)
+      else
+        $(delaySelector).addClass('on-time').removeClass('late')
+
+    removeOldLinesAndMarkers = ->
+      # I don't think this is correct. one fewer line than marker?
+      linesMarkers = zip(lines, markers)
+      oldLinesMarkers = linesMarkers.slice((start = array.length), start + maxTrail)
+      for [line, marker] in markersLines
+        marker?.setMap(null)
+        line?.setMap(null)
+
+
+    drawLineBetweenMarkers = (oldState, fromTo, index) ->
+      [oldDelta, oldOneIsOutside, map] = oldState
+      [fromPosition, toPosition] = fromTo
+      toLl = new LatLng toPosition.latitude, toPosition.longitude
+      # What are the units of toPosition.age ?
+      routeSegmentId = routeId + index
+      marker =
+        new Marker
+          position: toLl
+          map: map
+          title: routeSegmentId
+          icon: getRouteImage index
+      marker.setPosition toLl
+      marker.setMap map
+      markers.unshift marker
+  
+      if fromPosition?
+        fromLl = new LatLng fromPosition.latitude, fromPosition.longitude
+        line = new Polyline
+          path: [fromLl, toLl]
+          strokeColor: colorHex
+          strokeOpacity: getOpacity index
+          strokeWeight: 2
+          map: map
+
+        lines.unshift(line)
+
+      newDelta = if oldDelta and (age = toPosition.age)
+        Math.max(oldDelta, age)
+      else
+        oldDelta or age
+
+      newOneIsOutside = oldOneIsOutside or not normalBounds.contains toLl
+
+      [newDelta, newOneIsOutside, map]
+
+    @render = (routeUnsorted, map) ->
+      route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
+      routeFromTo = zip [undefined, route...], route
+      relevantRouteFromTo = routeFromTo.slice 0, maxTrail
+      initState = [0, false, map]
+      finalState = relevantRouteFromTo.reduce(drawLineBetweenMarkers, initState)
+      [recent, oneIsOutside, _] = finalState
+      warnAboutDelayedBuses recent
+      [oneIsOutside, relevantRouteFromTo.length]
+
+  @black = new Route 'black', '#111'
+  @red = new Route 'red', '#D11'
+  @green = new Route 'green', '#1D1'
+
+  @getRouteForPhone = (phoneId) ->
+    switch phoneId
+      when "HTC Desire C" then @black
+      when "GT-I8190N" then @black
+      when "blackberry" then @black
+      when "HTC Desire S" then @red
+      when "strawberry" then @red
+      else @green
 
 # cfg
 maxLat = 51.7757
@@ -31,6 +99,14 @@ minLat = 51.755117
 maxLng = -0.208826
 minLng = -0.251999
 #minLng = -0.235 # for testing
+
+normalZone = new google.maps.Rectangle
+  strokeColor: '#22DD22'
+  strokeOpacity: 0.7
+  strokeWeight: 2
+  fillColor: '#22DD22'
+  fillOpacity: 0.1
+  bounds: normalBounds
 
 stationX = 51.76373
 stationY = -0.215564
@@ -50,79 +126,24 @@ bl = new LatLng minLat, minLng
 tr = new LatLng maxLat, maxLng
 normalBounds = new LatLngBounds bl, tr
 
-getRouteImage = (deviceId, n) ->
-  debugger
-  '/' + (getBusForPhone(deviceId).getPng() or 'green') + getAlphaString(n) + '.png'
-
 #polyfill
-zip = (left, right) -> [a, right[i]] for a, i in left
+zip = (left, right) -> [left[i], a] for a, i in right
 
-
-# TODO split up this function, it is too long
-jsonHdlr = (myObject, map, markers, lines, old) ->
+jsonHdlr = (routes, map, oldValidity) ->
 
   $('#last-checked').text new Date
 
-  outsideArray = for unsortedArray in myObject
-    array = unsortedArray.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
-    zippedArray = zip array, [undefined, array...]
-    relevant = zippedArray.slice 0, maxTrail
-    out = for [myInnerObject, oldObject], nr in relevant
-      rlabel = myInnerObject.route
-      ll = new LatLng myInnerObject.latitude, myInnerObject.longitude
-      delta = myInnerObject.age # in what?
-      console.log "checking for age: " + delta
-      image = getRouteImage rlabel, nr
-      route = rlabel + nr
-      marker = (markers[route] ?=
-        new Marker
-          position: ll
-          map: map
-          title: route
-          icon: image)
-      marker.setPosition ll
-      marker.setMap map
-      if oldObject?
-        oldLl = new LatLng oldObject.latitude, oldObject.longitude
-        lines[route]?.setMap(null) # TODO investigate dangling lines
-        op = getOpacity nr
-        color = getBusForPhone(rlabel).getClr()
-        line = new Polyline
-          path: [oldLl, ll]
-          strokeColor: color
-          strokeOpacity: op
-          strokeWeight: 2
-          map: map
-        lines[route] = line
-      [delta, not normalBounds.contains ll]
+  warnings = for phoneId, routeContent of routes
+    route = Route.getRouteForPhone phoneId
+    route.render routeContent, map
 
-    reductor = (last, [next, _]) ->
-      if last and next
-        Math.max(last, next)
-      else
-        last or next
-    
-    recent = out.reduce reductor, undefined
+  oneIsOutside = warnings.some(([oneIsOutside, _]) -> oneIsOutside)
+  totLength = warnings.some(([_, length]) -> length)
+  
 
-    if (lastRlabel = relevant[relevant.length - 1][0].route) # when does this not hold
-      color = getBusForPhone(lastRlabel).getPng()
-      markersLines = zip(lines, markers).slice((start = array.length), start + maxTrail)
-      for [line, marker] in markersLines
-        marker?.setMap(null)
-        line?.setMap(null)
-      if recent and recent > 60
-        image = getRouteImage lastRlabel, 0
-        $("##{color}").addClass('late').removeClass('on-time')
-        $("##{color}").find('.time').text(formatInHms recent)
-      else
-        $("##{color}").addClass('on-time').removeClass('late')
-
-    out
-
-  flattenedOutsideArray = outsideArray.reduce ((a, b) -> a.concat(b)), []
-  if(totLength = flattenedOutsideArray.length)
+  if totLength
     $("#missing-bus-info").addClass("hide").removeClass("show")
-    if(oneIsOutside = flattenedOutsideArray.some(([_, b]) -> b))
+    if oneIsOutside
       normalZone.setMap map
       $("#one-is-outside").addClass("show").removeClass("hide")
     else
@@ -131,9 +152,10 @@ jsonHdlr = (myObject, map, markers, lines, old) ->
   else
     $("#missing-bus-info").addClass("show").removeClass("hide")
 
-  nEw = new Date
-  delay = Math.max(jsonRefreshInterval - (nEw - old), 0)
-  setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, markers, lines, nEw), delay
+  newValidity = new Date
+
+  delay = Math.max(jsonRefreshInterval - (newValidity - oldValidity), 0)
+  setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, newValidity), delay
 
 
 initialize = ->
@@ -153,7 +175,7 @@ initialize = ->
     map: map
     title: 'Titan'
 
-  $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, [], [], now)
+  $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now)
 
 
 # XXX is there a better way?
@@ -177,7 +199,6 @@ getOpacity = (n) ->
     when n < 4 then 0.2
     else 0.1
 
-#google.maps.event.addDomListener window, 'load', initialize
 window.onload = initialize
 
 

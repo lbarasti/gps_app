@@ -59,7 +59,12 @@ get '/gethistory/:channel' do
 
 	thetime = Time.now.utc.to_i # time in SECONDS
 	#ugly insertion of age
-	data = @@data[params[:channel].to_sym][:history].values.map {|x| x.map {|n| n.merge({:age => (thetime-n[:serverseconds])})} }.to_json
+	data = Hash[@@data[params[:channel].to_sym][:history].map { |k, v|
+    newv = v.map { |n|
+      n.merge({:age => (thetime-n[:serverseconds])})
+    } 
+    [k, v]
+  }].to_json
 	if request["callback"]
 		content_type 'text/plain'
 		"#{request["callback"]}(#{data})"
