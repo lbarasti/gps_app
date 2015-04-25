@@ -4,7 +4,6 @@ Map = google.maps.Map
 LatLngBounds = google.maps.LatLngBounds
 Polyline = google.maps.Polyline
 
-
 class Route
   constructor: (routeId, colorHex) ->
 
@@ -18,26 +17,25 @@ class Route
     getRouteImage = (n) ->
       "/png/#{encodeURIComponent routeId}#{encodeURIComponent getAlphaString n}.png"
 
-    warnAboutDelayedBuses = (recent) ->
-      if recent and recent > 60
+    warnAboutDelayedBuses = (latenessSeconds) ->
+      if latenessSeconds and latenessSeconds > maxLatenessSeconds
         image = getRouteImage 0
         $(delaySelector).addClass('late').removeClass('on-time')
-        $(delaySelector).find('.time').text(formatInHms recent)
+        $(delaySelector).find('.time').text(formatInHms latenessSeconds)
       else
         $(delaySelector).addClass('on-time').removeClass('late')
 
     removeOldLinesAndMarkers = ->
-      linesMarkers = zip(lines, markers)
+      linesMarkers = zip lines, markers
       for [line, marker] in linesMarkers
-        marker?.setMap(null)
-        line?.setMap(null)
+        marker?.setMap null
+        line?.setMap null
 
 
     drawLineBetweenMarkers = (oldState, fromTo, index) ->
-      [oldDelta, oldOneIsOutside, oldLines, oldMarkers, map] = oldState
+      [oldLatenessSeconds, oldIsDubious, oldLines, oldMarkers, map] = oldState
       [fromPosition, toPosition] = fromTo
       toLl = new LatLng toPosition.latitude, toPosition.longitude
-      # What are the units of toPosition.age ?
       routeSegmentId = routeId + index
       marker =
         new Marker
@@ -57,30 +55,36 @@ class Route
           strokeWeight: 2
           map: map
 
-      newDelta = if (age = toPosition.age) and oldDelta
-        Math.max(oldDelta, age)
+      newLatenessSeconds = if (age = toPosition.age) and oldLatenessSeconds
+        Math.max oldLatenessSeconds, age
       else
-        oldDelta or age
+        oldLatenessSeconds or age
 
-      newOneIsOutside = oldOneIsOutside or not normalBounds.contains toLl
+      newIsDubious = oldIsDubious or not normalBounds.contains toLl
 
-      [newDelta, newOneIsOutside, [oldLines..., line], [oldMarkers..., marker], map]
+      [
+        newLatenessSeconds
+        newIsDubious
+        [oldLines..., line]
+        [oldMarkers..., marker]
+        map
+      ]
 
     @render = (routeUnsorted, map) ->
       route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
       routeFromTo = zip [undefined, route...], route
       relevantRouteFromTo = routeFromTo.slice 0, maxTrail
       initState = [0, false, [], [], map]
-      finalState = relevantRouteFromTo.reduce(drawLineBetweenMarkers, initState)
-      [recent, oneIsOutside, newLines, newMarkers, _] = finalState
-      warnAboutDelayedBuses recent
+      finalState = relevantRouteFromTo.reduce drawLineBetweenMarkers, initState
+      [latenessSeconds, isDubious, newLines, newMarkers, _] = finalState
+      warnAboutDelayedBuses latenessSeconds
       removeOldLinesAndMarkers()
 
       # TODO can we get rid of the destructive assignation here?
       lines = newLines
       markers = newMarkers
 
-      [oneIsOutside, relevantRouteFromTo.length]
+      [isDubious, relevantRouteFromTo.length]
 
   @black = new Route 'black', '#111'
   @red = new Route 'red', '#D11'
@@ -94,13 +98,6 @@ class Route
       when "HTC Desire S" then @red
       when "strawberry" then @red
       else @green
-
-# cfg
-maxLat = 51.7757
-minLat = 51.755117
-maxLng = -0.208826
-minLng = -0.251999
-#minLng = -0.235 # for testing
 
 normalZone = new google.maps.Rectangle
   strokeColor: '#22DD22'
@@ -116,11 +113,22 @@ titanX = 51.762488
 titanY = -0.243518
 centerX = 51.764
 centerY = -0.230
+
+#configuration
 maxTrail = 5
 jsonRefreshInterval = 11500
+defaultZoom = 14
+maxLat = 51.7757
+minLat = 51.755117
+maxLng = -0.208826
+minLng = -0.251999
+maxLatenessSeconds = 60
+#minLng = -0.235 # for testing
+
+#magic numbers
 msPerSecond = 1000
-secondsPerHour = 3600
 secondsPerMinute = 60
+secondsPerHour = 3600
 minutesPerHour = 60
 
 llStation = new LatLng stationX, stationY
@@ -130,41 +138,43 @@ bl = new LatLng minLat, minLng
 tr = new LatLng maxLat, maxLng
 normalBounds = new LatLngBounds bl, tr
 
-#polyfill
-zip = (left, right) -> [left[i], a] for a, i in right
-
-jsonHdlr = (routes, map, oldValidity, dataUrl) ->
-
-  $('#last-checked').text new Date
-
-  warnings = for phoneId, routeContent of routes
-    route = Route.getRouteForPhone phoneId
-    route.render routeContent, map
-
-  oneIsOutside = warnings.some(([oneIsOutside, _]) -> oneIsOutside)
-  totLength = warnings.some(([_, length]) -> length)
-  
-
-  if totLength
+handleMissingAndDubiousBusInfo = (isDubious, isMissing, map) ->
+  if isMissing
+    $("#missing-bus-info").addClass("show").removeClass("hide")
+  else
     $("#missing-bus-info").addClass("hide").removeClass("show")
-    if oneIsOutside
+    if isDubious
       normalZone.setMap map
       $("#one-is-outside").addClass("show").removeClass("hide")
     else
       normalZone.setMap null
       $("#one-is-outside").addClass("hide").removeClass("show")
-  else
-    $("#missing-bus-info").addClass("show").removeClass("hide")
+
+#polyfill
+zip = (left, right) -> [left[i], a] for a, i in right
+
+jsonHdlr = (routes, map, oldValidity, dataUrl) ->
+
+  $('#last-checked').text(new Date)
+
+  warnings = for phoneId, routeContent of routes
+    route = Route.getRouteForPhone phoneId
+    route.render routeContent, map
+
+  isDubious = warnings.some ([isDubious, _]) -> isDubious
+  isMissing = not warnings.some ([_, length]) -> length
+
+  handleMissingAndDubiousBusInfo isDubious, isMissing, map
 
   newValidity = new Date
 
-  delay = Math.max(jsonRefreshInterval - (newValidity - oldValidity), 0)
+  delay = Math.max jsonRefreshInterval - (newValidity - oldValidity), 0
   setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, newValidity, dataUrl), delay
 
 
 initialize = (dataUrl) ->
   mapOptions =
-    zoom: 14
+    zoom: defaultZoom
     center: center
   
   map = new Map $('#mapcanvas').get(0), mapOptions
@@ -189,7 +199,7 @@ formatInHms = (seconds) ->
   h = ~~(seconds / secondsPerHour)
   m = ~~((seconds / secondsPerMinute) % minutesPerHour)
   s = seconds % secondsPerMinute
-  [hstr, mstr, sstr] = (("0" + n).slice(-2) for n in [h, m, s])
+  [hstr, mstr, sstr] = ("0#{n}".slice -2 for n in [h, m, s])
   hstr + ':' + mstr + ':' + sstr
 
 getAlphaString = (n) ->
