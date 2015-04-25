@@ -13,8 +13,8 @@ class Route
 
     throw new Error "No route ID set!" unless routeId
 
-    markers = []
     lines = []
+    markers = []
     
     delaySelector = "##{encodeURIComponent routeId}"
 
@@ -32,14 +32,13 @@ class Route
     removeOldLinesAndMarkers = ->
       # I don't think this is correct. one fewer line than marker?
       linesMarkers = zip(lines, markers)
-      oldLinesMarkers = linesMarkers.slice((start = array.length), start + maxTrail)
-      for [line, marker] in markersLines
+      for [line, marker] in linesMarkers
         marker?.setMap(null)
         line?.setMap(null)
 
 
     drawLineBetweenMarkers = (oldState, fromTo, index) ->
-      [oldDelta, oldOneIsOutside, map] = oldState
+      [oldDelta, oldOneIsOutside, oldLines, oldMarkers, map] = oldState
       [fromPosition, toPosition] = fromTo
       toLl = new LatLng toPosition.latitude, toPosition.longitude
       # What are the units of toPosition.age ?
@@ -52,18 +51,15 @@ class Route
           icon: getRouteImage index
       marker.setPosition toLl
       marker.setMap map
-      markers.unshift marker
   
-      if fromPosition?
+      line = if fromPosition?
         fromLl = new LatLng fromPosition.latitude, fromPosition.longitude
-        line = new Polyline
+        new Polyline
           path: [fromLl, toLl]
           strokeColor: colorHex
           strokeOpacity: getOpacity index
           strokeWeight: 2
           map: map
-
-        lines.unshift(line)
 
       newDelta = if oldDelta and (age = toPosition.age)
         Math.max(oldDelta, age)
@@ -72,16 +68,22 @@ class Route
 
       newOneIsOutside = oldOneIsOutside or not normalBounds.contains toLl
 
-      [newDelta, newOneIsOutside, map]
+      [newDelta, newOneIsOutside, [oldLines..., line], [oldMarkers..., marker], map]
 
     @render = (routeUnsorted, map) ->
       route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
       routeFromTo = zip [undefined, route...], route
       relevantRouteFromTo = routeFromTo.slice 0, maxTrail
-      initState = [0, false, map]
+      initState = [0, false, [], [], map]
       finalState = relevantRouteFromTo.reduce(drawLineBetweenMarkers, initState)
-      [recent, oneIsOutside, _] = finalState
+      [recent, oneIsOutside, newLines, newMarkers, _] = finalState
       warnAboutDelayedBuses recent
+      removeOldLinesAndMarkers()
+
+      # TODO can we get rid of the destructive assignation here?
+      lines = newLines
+      markers = newMarkers
+
       [oneIsOutside, relevantRouteFromTo.length]
 
   @black = new Route 'black', '#111'
