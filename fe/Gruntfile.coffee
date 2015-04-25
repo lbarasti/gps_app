@@ -33,11 +33,15 @@ module.exports = (grunt) ->
         ext: '.css'
     coffee:
       main:
-        expand: true
-        flatten: true
-        src: ['src/main/coffee/**/*.coffee']
-        dest: '../public/js'
-        ext: '.js'
+        files:
+          '../public/js/bustracker.js': [
+            'src/main/coffee/channels.coffee'
+            'src/main/coffee/bustracker.coffee'
+          ]
+          '../public/js/backdoor.js': [
+            'src/main/coffee/channels.coffee'
+            'src/main/coffee/backdoor.coffee'
+          ]
     watch:
       styl:
         files: ['src/main/styl/**/*.styl']

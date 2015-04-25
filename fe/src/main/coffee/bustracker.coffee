@@ -122,7 +122,6 @@ msPerSecond = 1000
 secondsPerHour = 3600
 secondsPerMinute = 60
 minutesPerHour = 60
-dataUrl = "/gethistory/#{encodeURIComponent mode}?callback=?"
 
 llStation = new LatLng stationX, stationY
 llTitan = new LatLng titanX, titanY
@@ -134,7 +133,7 @@ normalBounds = new LatLngBounds bl, tr
 #polyfill
 zip = (left, right) -> [left[i], a] for a, i in right
 
-jsonHdlr = (routes, map, oldValidity) ->
+jsonHdlr = (routes, map, oldValidity, dataUrl) ->
 
   $('#last-checked').text new Date
 
@@ -160,10 +159,10 @@ jsonHdlr = (routes, map, oldValidity) ->
   newValidity = new Date
 
   delay = Math.max(jsonRefreshInterval - (newValidity - oldValidity), 0)
-  setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, newValidity), delay
+  setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, newValidity, dataUrl), delay
 
 
-initialize = ->
+initialize = (dataUrl) ->
   mapOptions =
     zoom: 14
     center: center
@@ -180,7 +179,7 @@ initialize = ->
     map: map
     title: 'Titan'
 
-  $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now)
+  $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now, dataUrl)
 
 
 # TODO is there a better way?
@@ -207,6 +206,9 @@ getOpacity = (n) ->
     when n < 4 then 0.2
     else 0.1
 
-$ initialize
 
+modeHandler = (mode) ->
+  dataUrl = "/gethistory/#{encodeURIComponent mode}?callback=?"
+  $ -> initialize dataUrl
 
+getMode modeHandler

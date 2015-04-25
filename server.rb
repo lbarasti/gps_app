@@ -20,7 +20,6 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
 	history: {}
 }
 
-# hatfield centre: 51.7639267,-0.2135151
 @@data[:demo] = {
 	routes: {
 		blackberry: {
@@ -101,6 +100,10 @@ get '/getdata/:channel' do
 		content_type :json
 		data
 	end
+end
+
+get '/channels' do
+  @@data.keys.to_json
 end
 
 get '/gethistory/:channel' do
