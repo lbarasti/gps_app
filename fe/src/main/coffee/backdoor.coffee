@@ -1,1 +1,1 @@
-@getMode (mode) -> $ -> $('form').attr('action', "/post/#{encodeURIComponent mode}")
+getMode (mode) -> $ -> $('form').attr('action', "/post/#{encodeURIComponent mode}")

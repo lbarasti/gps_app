@@ -1,6 +1,6 @@
 
-validChannelHandler = (channels, cb) ->
-  [_..., modeHint] = document.location.pathname.split '/'
+validChannelHandler = (channels, pathname, cb) ->
+  [_..., modeHint] = pathname.split '/'
   @mode = if modeHint in channels
     cb modeHint
   else
@@ -11,4 +11,4 @@ validChannelHandler = (channels, cb) ->
   if (pathname = document.location.pathname) is '/'
     cb 'ocado'
   else
-    $.getJSON '/channels', (d) -> validChannelHandler d, cb
+    $.getJSON '/channels', (d) -> validChannelHandler d, pathname, cb
