@@ -4,6 +4,7 @@ Map = google.maps.Map
 LatLngBounds = google.maps.LatLngBounds
 Polyline = google.maps.Polyline
 
+
 #mode = 'ocado'
 mode = 'demo'
 
@@ -18,7 +19,7 @@ class Route
     delaySelector = "##{encodeURIComponent routeId}"
 
     getRouteImage = (n) ->
-      "/png#{encodeURIComponent routeId}#{encodeURIComponent getAlphaString n}.png"
+      "/png/#{encodeURIComponent routeId}#{encodeURIComponent getAlphaString n}.png"
 
     warnAboutDelayedBuses = (recent) ->
       if recent and recent > 60

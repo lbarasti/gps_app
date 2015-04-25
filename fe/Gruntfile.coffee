@@ -11,6 +11,9 @@ module.exports = (grunt) ->
   grunt.initConfig
     copy:
       pngs:
+        cwd: '.'
+        expand: true
+        flatten: true
         src: ['src/main/resources/**/*.png']
         dest: '../public/png'
     jade:
