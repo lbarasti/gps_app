@@ -63,7 +63,7 @@ get '/gethistory/:channel' do
     newv = v.map { |n|
       n.merge({:age => (thetime-n[:serverseconds])})
     } 
-    [k, v]
+    [k, newv]
   }].to_json
 	if request["callback"]
 		content_type 'text/plain'

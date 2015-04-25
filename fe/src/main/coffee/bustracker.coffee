@@ -30,7 +30,6 @@ class Route
         $(delaySelector).addClass('on-time').removeClass('late')
 
     removeOldLinesAndMarkers = ->
-      # I don't think this is correct. one fewer line than marker?
       linesMarkers = zip(lines, markers)
       for [line, marker] in linesMarkers
         marker?.setMap(null)
@@ -61,7 +60,7 @@ class Route
           strokeWeight: 2
           map: map
 
-      newDelta = if oldDelta and (age = toPosition.age)
+      newDelta = if (age = toPosition.age) and oldDelta
         Math.max(oldDelta, age)
       else
         oldDelta or age
@@ -123,6 +122,9 @@ centerY = -0.230
 maxTrail = 5
 jsonRefreshInterval = 11500
 msPerSecond = 1000
+secondsPerHour = 3600
+secondsPerMinute = 60
+minutesPerHour = 60
 dataUrl = "/gethistory/#{encodeURIComponent mode}?callback=?"
 
 llStation = new LatLng stationX, stationY
@@ -184,11 +186,14 @@ initialize = ->
   $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now)
 
 
-# XXX is there a better way?
+# TODO is there a better way?
 # eg Date::toLocaleString ?
+# Also what if the delay is more than 100h?
 formatInHms = (seconds) ->
-  hms = [~~(seconds / 3600), ~~((seconds / 60) % 60), seconds % 60]
-  [hstr, mstr, sstr] = (("0" + n).slice(-2) for n in hms)
+  h = ~~(seconds / secondsPerHour)
+  m = ~~((seconds / secondsPerMinute) % minutesPerHour)
+  s = seconds % secondsPerMinute
+  [hstr, mstr, sstr] = (("0" + n).slice(-2) for n in [h, m, s])
   hstr + ':' + mstr + ':' + sstr
 
 getAlphaString = (n) ->
