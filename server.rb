@@ -101,7 +101,7 @@ end
 
 def create_response(data_array)
     content_type :json
-    Hash[data_array].to_json
+    Hash[data_array || []].to_json
 end
 
 
@@ -160,16 +160,15 @@ post '/post/:channel' do
             #set to empty array if not exist...
             history_data = channel_data[:history]
             history_data[route_id] ||= []
-            history_data[route_id].unshift reading
+            route_history = history_data[route_id]
+            route_history.unshift reading
 
             #TODO: limit the size of the history array. 
             #the stuff below crashes the server...
-            l = route_history.length
-            if l > @@max_history
+            if route_history.length > @@max_history
                 route_history = route_history.take @@max_history
             end
         end
-        []
     end
 end
 
