@@ -86,95 +86,110 @@ HEADERS_HASH = {"User-Agent" => "Ruby/#{RUBY_VERSION}"}
     },
 }
 
-get '/getdata/:channel' do
-    halt(404) if @@data[params[:channel].to_sym].nil?
-    data = @@data[params[:channel].to_sym][:routes].values.map { |x|
-        x.map { |n|
-            n.merge({:age => (thetime-n[:serverseconds])})
-        }
-    }.to_json
-    if request["callback"]
-        content_type 'text/plain'
-        "#{request["callback"]}(#{data})"
-    else
-        content_type :json
-        data
-    end
+def get_time
+    Time.now.utc.to_i # time in SECONDS
 end
+
+def add_age(route_segment, time)
+    route_segment.merge({:age => (time - route_segment[:serverseconds])})
+end
+
+def get_channel_data(params)
+    output = @@data[params[:channel].to_sym]
+    halt(404) if output.nil?
+    output
+end
+
+def serve_file(path)
+    send_file File.join settings.public_folder, path
+end
+
+def create_response(data_array)
+    content_type :json
+    Hash[data_array].to_json
+end
+
+
+def respond(params, &block)
+   create_response yield get_time, get_channel_data(params)
+end
+
 
 get '/channels' do
     @@data.keys.to_json
 end
 
-get '/gethistory/:channel' do
-    halt(404) if @@data[params[:channel].to_sym].nil?
-
-    thetime = Time.now.utc.to_i # time in SECONDS
-
-    #ugly insertion of age
-    data = Hash[@@data[params[:channel].to_sym][:history].map { |k, v|
-        newv = v.map { |n|
-            n.merge({:age => (thetime-n[:serverseconds])})
-        }
-        [k, newv]
-    }].to_json
-    if request["callback"]
-        content_type 'text/plain'
-        "#{request["callback"]}(#{data})"
-    else
-        content_type :json
-        data
+get '/getdata/:channel' do
+    respond params do |time, channel_data|
+        channel_data[:routes].map do |k, v|
+            [k, add_age(v, time)]
+        end
     end
 end
 
-post '/post/:channel' do
-    channel_data = @@data[params[:channel].to_sym]
-    halt(404) if channel_data.nil?
-    return if params[:accuracy].to_f > 100
-
-    thetime = Time.now.utc.to_i # time in SECONDS
-    route_id = params[:route]
-    reading = {
-        route: route_id,
-        longitude: params[:longitude],
-        latitude: params[:latitude],
-        timestamp: params[:timestamp],
-        last_restarted: params[:last_restarted],
-        accuracy: params[:accuracy],
-        serverseconds: thetime
-    }
-
-    # TODO should the nil check be within the lock block?
-    @@data_lock.synchronize {
-
-        #DATA
-        channel_data[:routes][params[:route]] = reading
-
-        #HISTORY
-        #set to empty array if not exist...
-        history_data = channel_data[:history]
-        history_data[route_id] ||= []
-        route_history = history_data[route_id]
-        route_history.unshift(reading)
-
-        #TODO: limit the size of the history array. the stuff below crashes the server...
-        l = route_history.length
-        if (l > @@max_history)
-            route_history = route_history.take(@@max_history)
+get '/gethistory/:channel' do
+    #ugly insertion of age
+    respond params do |time, channel_data|
+        channel_data[:history].map do |k, v|
+            newv = v.map do |n|
+                add_age n, time
+            end
+            [k, newv]
         end
-    }
+    end
+end
+
+
+post '/post/:channel' do
+    respond params do |time, channel_data|
+
+        return if params[:accuracy].to_f > 100
+
+        route_id = params[:route]
+        reading = {
+            route: route_id,
+            longitude: params[:longitude],
+            latitude: params[:latitude],
+            timestamp: params[:timestamp],
+            last_restarted: params[:last_restarted],
+            accuracy: params[:accuracy],
+            serverseconds: time
+        }
+
+        @@data_lock.synchronize do
+
+            #DATA
+            channel_data[:routes][params[:route]] = reading
+
+            #HISTORY
+            #set to empty array if not exist...
+            history_data = channel_data[:history]
+            history_data[route_id] ||= []
+            route_history = history_data[route_id]
+            route_history.unshift reading
+
+            #TODO: limit the size of the history array. 
+            #the stuff below crashes the server...
+            l = route_history.length
+            if l > @@max_history
+                route_history = route_history.take @@max_history
+            end
+        end
+        []
+    end
 end
 
 # TODO disable in prod.
 # Will still be in the public folder even if this get is not forwarded
 get '/form/:channel' do
-    send_file File.join(settings.public_folder, '/html/backdoor.html')
+    serve_file '/html/backdoor.html'
 end
 
 get '/display/:channel' do
-    send_file File.join(settings.public_folder, '/html/bustracker.html')
+    serve_file '/html/bustracker.html'
 end
 
 get '/' do
-    send_file File.join(settings.public_folder, '/html/bustracker.html')
+    serve_file '/html/bustracker.html'
 end
+

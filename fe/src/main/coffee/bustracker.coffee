@@ -4,100 +4,118 @@ Map = google.maps.Map
 LatLngBounds = google.maps.LatLngBounds
 Polyline = google.maps.Polyline
 
-class Route
-  constructor: (routeId, colorHex) ->
-
-    throw new Error "No route ID set!" unless routeId
-
-    lines = []
-    markers = []
-    
-    delaySelector = "##{encodeURIComponent routeId}"
-
-    getRouteImage = (n) ->
-      "/png/#{encodeURIComponent routeId}#{encodeURIComponent getAlphaString n}.png"
-
-    warnAboutDelayedBuses = (latenessSeconds) ->
-      if latenessSeconds and latenessSeconds > maxLatenessSeconds
-        image = getRouteImage 0
-        $(delaySelector).addClass('late').removeClass('on-time')
-        $(delaySelector).find('.time').text(formatInHms latenessSeconds)
-      else
-        $(delaySelector).addClass('on-time').removeClass('late')
-
-    removeOldLinesAndMarkers = ->
-      linesMarkers = zip lines, markers
-      for [line, marker] in linesMarkers
-        marker?.setMap null
-        line?.setMap null
-
-
-    drawLineBetweenMarkers = (oldState, fromTo, index) ->
-      [oldLatenessSeconds, oldIsDubious, oldLines, oldMarkers, map] = oldState
-      [fromPosition, toPosition] = fromTo
-      toLl = new LatLng toPosition.latitude, toPosition.longitude
-      routeSegmentId = routeId + index
-      marker =
-        new Marker
-          position: toLl
-          map: map
-          title: routeSegmentId
-          icon: getRouteImage index
-      marker.setPosition toLl
-      marker.setMap map
+getGetRouteForPhone = ->
+  class Route
+    constructor: (routeId, colorHex) ->
   
-      line = if fromPosition?
-        fromLl = new LatLng fromPosition.latitude, fromPosition.longitude
-        new Polyline
-          path: [fromLl, toLl]
-          strokeColor: colorHex
-          strokeOpacity: getOpacity index
-          strokeWeight: 2
-          map: map
+      throw new Error "No route ID set!" unless routeId
+  
+      lines = []
+      markers = []
 
-      newLatenessSeconds = if (age = toPosition.age) and oldLatenessSeconds
-        Math.max oldLatenessSeconds, age
-      else
-        oldLatenessSeconds or age
+      encodedRouteId = encodeURIComponent routeId
+      
+      delaySelector = "##{encodedRouteId}"
+  
+      getRouteImage = (n) ->
 
-      newIsDubious = oldIsDubious or not normalBounds.contains toLl
+        getAlphaString = (n) ->
+          switch
+            when n < 1 then ''
+            when n < 2 then '75'
+            when n < 3 then '50'
+            else '25'
+        "/png/#{encodedRouteId}#{encodeURIComponent getAlphaString n}.png"
+  
+      warnAboutDelayedBuses = (latenessSeconds) ->
+        if latenessSeconds and latenessSeconds > maxLatenessSeconds
+          image = getRouteImage 0
+          $(delaySelector).addClass('late').removeClass('on-time')
+          $(delaySelector).find('.time').text(formatInHms latenessSeconds)
+        else
+          $(delaySelector).addClass('on-time').removeClass('late')
+  
+      removeOldLinesAndMarkers = ->
+        linesMarkers = zip lines, markers
+        for [line, marker] in linesMarkers
+          marker?.setMap null
+          line?.setMap null
+  
+  
+      drawLineBetweenMarkers = (oldState, fromTo, index) ->
 
-      [
-        newLatenessSeconds
-        newIsDubious
-        [oldLines..., line]
-        [oldMarkers..., marker]
-        map
-      ]
+        getOpacity = (n) ->
+          switch
+            when n < 2 then 0.4
+            when n < 3 then 0.3
+            when n < 4 then 0.2
+            else 0.1
 
-    @render = (routeUnsorted, map) ->
-      route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare(r0.timestamp))
-      routeFromTo = zip [undefined, route...], route
-      relevantRouteFromTo = routeFromTo.slice 0, maxTrail
-      initState = [0, false, [], [], map]
-      finalState = relevantRouteFromTo.reduce drawLineBetweenMarkers, initState
-      [latenessSeconds, isDubious, newLines, newMarkers, _] = finalState
-      warnAboutDelayedBuses latenessSeconds
-      removeOldLinesAndMarkers()
-
-      # TODO can we get rid of the destructive assignation here?
-      lines = newLines
-      markers = newMarkers
-
-      [isDubious, relevantRouteFromTo.length]
-
-  @black = new Route 'black', '#111'
-  @red = new Route 'red', '#D11'
-  @green = new Route 'green', '#1D1'
-
-  @getRouteForPhone = (phoneId) ->
+        [oldLatenessSeconds, oldIsDubious, oldLines, oldMarkers, map] = oldState
+        [fromPosition, toPosition] = fromTo
+        toLl = new LatLng toPosition.latitude, toPosition.longitude
+        routeSegmentId = routeId + index
+        marker =
+          new Marker
+            position: toLl
+            map: map
+            title: routeSegmentId
+            icon: getRouteImage index
+        marker.setPosition toLl
+        marker.setMap map
+    
+        line = if fromPosition?
+          fromLl = new LatLng fromPosition.latitude, fromPosition.longitude
+          new Polyline
+            path: [fromLl, toLl]
+            strokeColor: colorHex
+            strokeOpacity: getOpacity index
+            strokeWeight: 2
+            map: map
+  
+        newLatenessSeconds = if (age = toPosition.age) and oldLatenessSeconds
+          Math.max oldLatenessSeconds, age
+        else
+          oldLatenessSeconds or age
+  
+        [
+          newLatenessSeconds
+          oldIsDubious or not normalBounds.contains toLl
+          [oldLines..., line]
+          [oldMarkers..., marker]
+          map
+        ]
+  
+      @render = (routeUnsorted, map) ->
+        route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare r0.timestamp)
+        routeFromTo = zip [undefined, route...], route
+        relevantRouteFromTo = routeFromTo.slice 0, maxTrail
+        initState = [0, false, [], [], map]
+        finalState = relevantRouteFromTo.reduce drawLineBetweenMarkers, initState
+        [latenessSeconds, isDubious, newLines, newMarkers, _] = finalState
+        warnAboutDelayedBuses latenessSeconds
+        removeOldLinesAndMarkers()
+  
+        # TODO can we get rid of the destructive assignation here?
+        lines = newLines
+        markers = newMarkers
+  
+        [isDubious, relevantRouteFromTo.length]
+  
+  black = new Route 'black', '#111'
+  red = new Route 'red', '#D11'
+  green = new Route 'green', '#1D1'
+  
+  (phoneId) ->
     switch phoneId
-      when "HTC Desire C" then @black
-      when "GT-I8190N" then @black
-      when "blackberry" then @black
-      when "HTC Desire S" then @red
-      when "strawberry" then @red
-      else @green
+      when "HTC Desire C" then black
+      when "GT-I8190N" then black
+      when "blackberry" then black
+      when "HTC Desire S" then red
+      when "strawberry" then red
+      else green
+
+getRouteForPhone = getGetRouteForPhone()
 
 normalZone = new google.maps.Rectangle
   strokeColor: '#22DD22'
@@ -158,7 +176,7 @@ jsonHdlr = (routes, map, oldValidity, dataUrl) ->
   $('#last-checked').text(new Date)
 
   warnings = for phoneId, routeContent of routes
-    route = Route.getRouteForPhone phoneId
+    route = getRouteForPhone phoneId
     route.render routeContent, map
 
   isDubious = warnings.some ([isDubious, _]) -> isDubious
@@ -167,7 +185,6 @@ jsonHdlr = (routes, map, oldValidity, dataUrl) ->
   handleMissingAndDubiousBusInfo isDubious, isMissing, map
 
   newValidity = new Date
-
   delay = Math.max jsonRefreshInterval - (newValidity - oldValidity), 0
   setTimeout (-> $.getJSON dataUrl, (d) -> jsonHdlr d, map, newValidity, dataUrl), delay
 
@@ -201,23 +218,9 @@ formatInHms = (seconds) ->
   s = seconds % secondsPerMinute
   ("0#{n}".slice -2 for n in [h, m, s]).reduce (a, b) -> a + ':' + b
 
-getAlphaString = (n) ->
-  switch
-    when n < 1 then ''
-    when n < 2 then '75'
-    when n < 3 then '50'
-    else '25'
-
-getOpacity = (n) ->
-  switch
-    when n < 2 then 0.4
-    when n < 3 then 0.3
-    when n < 4 then 0.2
-    else 0.1
-
 
 modeHandler = (mode) ->
-  dataUrl = "/gethistory/#{encodeURIComponent mode}?callback=?"
+  dataUrl = "/gethistory/#{encodeURIComponent mode}"
   $ -> initialize dataUrl
 
 getMode modeHandler
