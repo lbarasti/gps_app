@@ -4,7 +4,6 @@ require 'json'
 require 'open-uri'
 require 'thread'
 
-HEADERS_HASH = { 'User-Agent' => "Ruby/#{RUBY_VERSION}" }
 MAX_HISTORY = 10
 DATA_LOCK = Mutex.new
 
@@ -77,13 +76,19 @@ INIT_STATE = {
   }
 }
 
+class Array
+  def create_response
+    Hash[self].to_json
+  end
+end
+
 class Channels
   def initialize(data)
     @data = data
   end
 
   def respond(params, &_)
-    create_response(yield(Time.now.utc.to_i, get_channel_data(params)) || [])
+    (yield(Time.now.utc.to_i, get_channel_data(params)) || []).create_response
   end
 
   def channels
@@ -91,11 +96,6 @@ class Channels
   end
 
   private
-
-  def create_response(data_array)
-    # content_type :json
-    Hash[data_array].to_json
-  end
 
   def get_channel_data(params)
     @data[params[:channel].to_sym] || halt(404)
@@ -106,8 +106,10 @@ def serve_file(path)
   send_file File.join settings.public_folder, path
 end
 
-def add_age(route_segment, time)
-  route_segment.merge age: (time - route_segment[:serverseconds])
+class Hash
+  def add_age(time)
+    merge age: (time - self[:serverseconds])
+  end
 end
 
 DATA = Channels.new(INIT_STATE)
@@ -120,7 +122,7 @@ end
 get '/getdata/:channel' do
   DATA.respond params do |time, channel_data|
     channel_data[:routes].map do |k, v|
-      [k, add_age(v, time)]
+      [k, v.add_age(time)]
     end
   end
 end
@@ -130,7 +132,7 @@ get '/gethistory/:channel' do
   DATA.respond params do |time, channel_data|
     channel_data[:history].map do |k, v|
       newv = v.map do |n|
-        add_age n, time
+        n.add_age(time)
       end
       [k, newv]
     end
