@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require 'sinatra'
 require 'json'
-require 'open-uri'
-require 'thread'
 
 MAX_HISTORY = 10
 DATA_LOCK = Mutex.new
@@ -149,8 +147,6 @@ post '/post/:channel' do
         longitude: params[:longitude],
         latitude: params[:latitude],
         timestamp: params[:timestamp],
-        last_restarted: params[:last_restarted],
-        accuracy: params[:accuracy],
         serverseconds: time
       }
 
