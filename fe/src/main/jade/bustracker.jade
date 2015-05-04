@@ -1,0 +1,26 @@
+html
+  head
+    title Ben's BusTracker
+    meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
+    meta(charset="utf8")
+    link(rel='stylesheet', href='/css/bustracker.css')
+    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
+    script(src="http://code.jquery.com/jquery-1.10.1.min.js")
+    script(src="/js/bustracker.js")
+  body
+    #container
+      #info
+        div
+          span Server last checked: 
+          span#last-checked
+        each color in ['green', 'red', 'black']
+          .on-time(id= color)
+            img(src='/png/#{color}.png')
+            //- intentional ending of line with white space
+            span Time since last report: 
+            span.time
+        #one-is-outside.hide NB: some abnormal location readings.
+        #missing-bus-info.hide There is no bus info!
+      #mapcanvas
+
+        

@@ -1,0 +1,14 @@
+html
+  head
+    script(src="http://code.jquery.com/jquery-1.10.1.min.js")
+    script(src="/js/backdoor.js")
+  body
+    form(method="post", action="idk")
+      each box in ['route', 'longitude', 'latitude', 'timestamp']
+        label(for= box) #{box}
+        //- this line intentionally ends with a space
+        span : 
+        input(type='text', name= box)
+        br
+      input(type='submit')
+  
