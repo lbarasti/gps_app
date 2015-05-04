@@ -6,3 +6,4 @@ public/js
 public/css
 public/png
 fe/node_modules
+fe/gulpfile.js
