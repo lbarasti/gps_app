@@ -216,7 +216,7 @@ formatInHms = (seconds) ->
   h = ~~(seconds / secondsPerHour)
   m = ~~((seconds / secondsPerMinute) % minutesPerHour)
   s = seconds % secondsPerMinute
-  ("0#{n}".slice -2 for n in [h, m, s]).reduce (a, b) -> a + ':' + b
+  ("0#{n}".slice -2 for n in [h, m, s]).join ':'
 
 
 modeHandler = (mode) ->
