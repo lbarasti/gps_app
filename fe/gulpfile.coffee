@@ -23,7 +23,7 @@ coffeesrc =
     'src/main/coffee/backdoor.coffee'
   ]
 
-cleanJs = (cb) ->
+gulp.task 'clean-js', (cb) ->
   del ['../public/**/*.js'], force: true, cb
 
 gulp.task 'clean-css', (cb) ->
@@ -57,13 +57,12 @@ gulp.task 'copy', ->
 gulp.task 'coffee', buildCoffee
 gulp.task 'jade', buildJade
 gulp.task 'styl', buildStyl
-gulp.task 'clean-js', cleanJs
 
 gulp.task 'watch', ->
   watch 'src/main/styl/**/*.styl', buildStyl
 
   watch 'src/main/jade/**/*.jade', buildJade
-  watch 'src/main/coffee/**/*.coffee', cleanJs buildCoffee
+  watch 'src/main/coffee/**/*.coffee', buildCoffee
 
 gulp.task 'build', ['jade', 'styl', 'coffee', 'copy']
 gulp.task 'clean', ['clean-html', 'clean-css', 'clean-js']
