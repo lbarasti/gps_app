@@ -29,7 +29,6 @@ getGetRouteForPhone = ->
   
       warnAboutDelayedBuses = (latenessSeconds) ->
         if latenessSeconds and latenessSeconds > maxLatenessSeconds
-          image = getRouteImage 0
           $(delaySelector).addClass('late').removeClass('on-time')
           $(delaySelector).find('.time').text(formatInHms latenessSeconds)
         else
