@@ -1,9 +1,5 @@
 *.*~
 *.swo
 *.swp
-public/html/*.html
-public/js/*.js
-public/css/*.css
-public/png/*.png
 node_modules
 gulpfile.js
