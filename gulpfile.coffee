@@ -14,44 +14,44 @@ stylopts = {}
 
 coffeesrc =
   'bustracker.js': [
-    'src/main/coffee/channels.coffee'
-    'src/main/coffee/bustracker.coffee'
+    'fe/src/main/coffee/channels.coffee'
+    'fe/src/main/coffee/bustracker.coffee'
   ]
   'backdoor.js': [
-    'src/main/coffee/channels.coffee'
-    'src/main/coffee/backdoor.coffee'
+    'fe/src/main/coffee/channels.coffee'
+    'fe/src/main/coffee/backdoor.coffee'
   ]
 
 gulp.task 'clean-js', (cb) ->
-  del ['../public/**/*.js'], force: true, cb
+  del ['public/**/*.js'], force: true, cb
 
 gulp.task 'clean-css', (cb) ->
-  del ['../public/**/*.css'], force: true, cb
+  del ['public/**/*.css'], force: true, cb
 
 gulp.task 'clean-html', (cb) ->
-  del ['../public/**/*.html'], force: true, cb
+  del ['public/**/*.html'], force: true, cb
 
 gulp.task 'jade', ->
-  gulp.src 'src/main/jade/**/*.jade'
+  gulp.src 'fe/src/main/jade/**/*.jade'
     .pipe jade jadeopts
-    .pipe gulp.dest '../public/html'
+    .pipe gulp.dest 'public/html'
 
 buildCoffee = ->
   for k, v of coffeesrc
     gulp.src v
       .pipe coffee coffeeopts
       .pipe concat k
-      .pipe gulp.dest '../public/js'
+      .pipe gulp.dest 'public/js'
 
 
 gulp.task 'styl', ->
-  gulp.src 'src/main/styl/**/*.styl'
+  gulp.src 'fe/src/main/styl/**/*.styl'
     .pipe styl stylopts
-    .pipe gulp.dest '../public/css'
+    .pipe gulp.dest 'public/css'
 
 gulp.task 'copy', ->
-  gulp.src 'src/main/resources/**/*.png'
-    .pipe copy '../public/png'
+  gulp.src __dirname + '/fe/src/main/resources/**'
+    .pipe gulp.dest 'public/png'
 
 gulp.task 'watch', ->
   gulp.watch 'src/main/coffee/**/*.coffee', ['coffee']
