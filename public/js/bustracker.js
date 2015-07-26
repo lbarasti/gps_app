@@ -67,9 +67,7 @@
           return "/png/" + encodedRouteId + (encodeURIComponent(getAlphaString(n))) + ".png";
         };
         warnAboutDelayedBuses = function(latenessSeconds) {
-          var image;
           if (latenessSeconds && latenessSeconds > maxLatenessSeconds) {
-            image = getRouteImage(0);
             $(delaySelector).addClass('late').removeClass('on-time');
             return $(delaySelector).find('.time').text(formatInHms(latenessSeconds));
           } else {
@@ -228,15 +226,15 @@
 
   handleMissingAndDubiousBusInfo = function(isDubious, isMissing, map) {
     if (isMissing) {
-      return $("#missing-bus-info").addClass("show").removeClass("hide");
+      return $("#missing-bus-info").removeClass("hidden");
     } else {
-      $("#missing-bus-info").addClass("hide").removeClass("show");
+      $("#missing-bus-info").addClass("hidden");
       if (isDubious) {
         normalZone.setMap(map);
-        return $("#one-is-outside").addClass("show").removeClass("hide");
+        return $("#one-is-outside").removeClass("hidden");
       } else {
         normalZone.setMap(null);
-        return $("#one-is-outside").addClass("hide").removeClass("show");
+        return $("#one-is-outside").addClass("hidden");
       }
     }
   };
