@@ -8,7 +8,7 @@ concat = require 'gulp-concat'
 runSequence = require 'run-sequence'
 del = require 'del'
 
-jadeopts = {}
+jadeopts = pretty: true
 coffeeopts = {}
 stylopts = {}
 
