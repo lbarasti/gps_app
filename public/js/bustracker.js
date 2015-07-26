@@ -120,7 +120,7 @@
             strokeWeight: 2,
             map: map
           })) : void 0;
-          newLatenessSeconds = (age = toPosition.age) && oldLatenessSeconds ? Math.max(oldLatenessSeconds, age) : oldLatenessSeconds || age;
+          newLatenessSeconds = (age = toPosition.age) && oldLatenessSeconds ? Math.min(oldLatenessSeconds, age) : oldLatenessSeconds || age;
           return [newLatenessSeconds, oldIsDubious || !normalBounds.contains(toLl), slice.call(oldLines).concat([line]), slice.call(oldMarkers).concat([marker]), map];
         };
         this.render = function(routeUnsorted, map) {

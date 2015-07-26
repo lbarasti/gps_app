@@ -73,7 +73,7 @@ getGetRouteForPhone = ->
             map: map
   
         newLatenessSeconds = if (age = toPosition.age) and oldLatenessSeconds
-          Math.max oldLatenessSeconds, age
+          Math.min oldLatenessSeconds, age
         else
           oldLatenessSeconds or age
   
