@@ -2,4 +2,4 @@
 npm install
 coffee -c gulpfile.coffee
 gulp &
-./server.rb
+bundle exec ruby server.rb
