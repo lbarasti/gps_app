@@ -29,6 +29,9 @@ app.get('/style.css', (req, res) => {
   }
 });
 
+// Serve images
+app.use(express.static('public'));
+
 // Serve index page
 app.get('*', (req, res) => {
   res.sendFile(__dirname + '/build/index.html');
