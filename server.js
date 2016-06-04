@@ -36,12 +36,14 @@ app.get('/style.css', (req, res) => {
 app.use(express.static('public'));
 
 app.get('/api/channel/:channelId/data', (req, res) => {
-  res.send(state.channels[req.params.channelId])
+  res.send(state.channels[req.params.channelId] || [])
 });
 
 app.post('/post/:channelId', (req, res) => {
   // TODO: validate req.query
   let gpsData = Object.assign({serverTime: (new Date()).getTime()}, req.query)
+  gpsData.latitude = Number.parseFloat(gpsData.latitude);
+  gpsData.longitude = Number.parseFloat(gpsData.longitude);
   let chState = state.channels[req.params.channelId];
 
   let newState = chState ? chState.concat(gpsData) : [gpsData];
