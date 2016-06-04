@@ -11,6 +11,9 @@ const app = express();
  *
  ************************************************************/
 
+const MAX_POSITIONS = 10;
+let state = {channels: {}}
+
 // Serve application file depending on environment
 app.get('/app.js', (req, res) => {
   if (process.env.PRODUCTION) {
@@ -31,6 +34,22 @@ app.get('/style.css', (req, res) => {
 
 // Serve images
 app.use(express.static('public'));
+
+app.get('/api/channel/:channelId/data', (req, res) => {
+  res.send(state.channels[req.params.channelId])
+});
+
+app.post('/post/:channelId', (req, res) => {
+  // TODO: validate req.query
+  let gpsData = Object.assign({serverTime: (new Date()).getTime()}, req.query)
+  let chState = state.channels[req.params.channelId];
+
+  let newState = chState ? chState.concat(gpsData) : [gpsData];
+  state.channels[req.params.channelId] = (newState.length > MAX_POSITIONS) ? newState.slice(1) : newState
+  
+  res.send('OK')
+});
+
 
 // Serve index page
 app.get('*', (req, res) => {
