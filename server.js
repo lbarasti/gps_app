@@ -1,5 +1,9 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import multer from 'multer';
+
 const app = express();
+const upload = multer();
 
 
 /************************************************************
@@ -12,7 +16,7 @@ const app = express();
  ************************************************************/
 
 const MAX_POSITIONS = 40;
-let state = {channels: {}}
+let state = {channels: {}, mapping: {}}
 
 // Serve application file depending on environment
 app.get('/app.js', (req, res) => {
@@ -35,6 +39,9 @@ app.get('/style.css', (req, res) => {
 // Serve images
 app.use(express.static('public'));
 
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 app.get('/api/channel/:channelId/data', (req, res) => {
   res.send(state.channels[req.params.channelId] || [])
 });
@@ -53,6 +60,14 @@ app.post('/post/:channelId', (req, res) => {
   res.send('OK')
 });
 
+app.post('/api/channel/:channelId/routes-mapping', upload.array(), (req, res) => {
+  state.mapping[req.params.channelId] = req.body;
+  res.send('OK');
+});
+
+app.get('/api/channel/:channelId/routes-mapping', (req, res) => {
+  res.send(state.mapping[req.params.channelId] || {});
+});
 
 // Serve index page
 app.get('*', (req, res) => {

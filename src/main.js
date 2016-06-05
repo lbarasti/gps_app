@@ -13,15 +13,16 @@ let setMarkers = (map, data) => {
   state.markers = newMarkers;
 }
 
-let fetchAndSet = map => {
+let fetchAndSet = (map, mapping) => {
   fetchMarkerData().then(data => {
     let dataByRoute = _.groupBy(data, datum => datum.route);
     let markerData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
       .map(route => {
-        let icons = ['','75','50','25'].map(alpha => `/png/black${alpha}.png`).slice(0, route.length);
+        let color = mapping[route[0].route] ? mapping[route[0].route].color : 'black';
+        let icons = ['','75','50','25'].map(alpha => `/png/${color}${alpha}.png`).slice(0, route.length);
         return _.zip(route, icons).map(([{route, serverTime, position}, icon]) => {
           return {
-            title: `${route} - ${formatTime(serverTime)}`,
+            title: `${(mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
             position: position,
             icon: icon
           }
@@ -55,11 +56,14 @@ let places = [
 ];
 
 $script("https://maps.googleapis.com/maps/api/js", () => {
-  let map = new google.maps.Map(document.getElementById('map'), {
-    center: map_centre,
-    zoom: 14
+  fetch('/api/channel/ocado/routes-mapping').then((response) => response.json()).then(mapping => {
+    console.log(mapping);
+    let map = new google.maps.Map(document.getElementById('map'), {
+      center: map_centre,
+      zoom: 14
+    });
+    places.forEach(marker => newMarker(marker, map));
+    fetchAndSet(map, mapping);
+    setInterval(() => fetchAndSet(map, mapping), 10000);
   });
-  places.forEach(marker => newMarker(marker, map));
-  fetchAndSet(map);
-  setInterval(() => fetchAndSet(map), 10000);
 })
