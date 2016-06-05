@@ -3,11 +3,11 @@ import _ from 'underscore'
 import $script from 'scriptjs'
 
 const MAX_POSITIONS = 4;
-let map_centre = {lat: 51.767, lng: -0.230}
-let state = {markers: []}
+let map_centre = {lat: 51.767, lng: -0.230};
+let state = {markers: [], polylines: []};
 
 let setMarkers = (map, data) => {
-  console.log("setting state.markers", data);
+  // console.log("setting state.markers", data);
   let newMarkers = data.map(marker => newMarker(marker, map));
   state.markers.forEach(marker => marker.setMap(null));
   state.markers = newMarkers;
@@ -16,17 +16,18 @@ let setMarkers = (map, data) => {
 let fetchAndSet = (map, mapping) => {
   fetchMarkerData().then(data => {
     let dataByRoute = _.groupBy(data, datum => datum.route);
-    let markerData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
-      .map(route => {
-        let alphas = ['','75','50','25'].slice(0, route.length);
-        return _.zip(route, alphas).map(([{route, serverTime, position}, alpha]) => {
-          return {
-            title: `${(mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
-            position: position,
-            icon: `/png/${(mapping[route] || {}).color || 'black'}${alpha}.png`
-          }
-        })
-      });
+    let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
+    let markerData = routesData.map(route => {
+      let iconOpacity = [1.0 , 0.75 , 0.50 , 0.25].slice(0, route.length);
+      return _.zip(route, iconOpacity).map(([{route, serverTime, position}, opacity]) => {
+        return {
+          title: `${(mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
+          position: position,
+          icon: `/png/${(mapping[route] || {}).color || 'black'}.png`,
+          opacity: opacity
+        }
+      })
+    });
 
     setMarkers(map, _.flatten(markerData));
   });
@@ -56,7 +57,6 @@ let places = [
 
 $script("https://maps.googleapis.com/maps/api/js", () => {
   fetch('/api/channel/ocado/routes-mapping').then((response) => response.json()).then(mapping => {
-    console.log(mapping);
     let map = new google.maps.Map(document.getElementById('map'), {
       center: map_centre,
       zoom: 14
