@@ -12,6 +12,12 @@ let setMarkers = (map, data) => {
   state.markers.forEach(marker => marker.setMap(null));
   state.markers = newMarkers;
 }
+let setPolyline = (map, data) => {
+  // console.log("setting state.polyline", data)
+  let newPolylines = data.map(polyline => newPolyline(polyline, map));
+  state.polylines.forEach(pl => pl.setMap(null));
+  state.polylines = newPolylines;
+}
 
 let fetchAndSet = (map, mapping) => {
   fetchMarkerData().then(data => {
@@ -28,8 +34,18 @@ let fetchAndSet = (map, mapping) => {
         }
       })
     });
+    let polylineData = routesData.map(route => {
+      return {
+        path: route.map(({position}) => position),
+        geodesic: true,
+        strokeColor: 'green',
+        strokeOpacity: 0.3,
+        strokeWeight: 2
+      }
+    });
 
     setMarkers(map, _.flatten(markerData));
+    setPolyline(map, polylineData);
   });
 }
 
@@ -48,6 +64,7 @@ let fetchMarkerData = () => fetch('/api/channel/ocado/data').then((response) => 
 });
 
 let newMarker = (marker, map) => new google.maps.Marker(Object.assign({map: map}, marker));
+let newPolyline = (marker, map) => new google.maps.Polyline(Object.assign({map: map}, marker));
 
 let places = [
   {label: 'S', title: 'Hatfield Station', position: {lat: 51.76373, lng: -0.215564}},
