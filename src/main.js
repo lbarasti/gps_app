@@ -18,13 +18,12 @@ let fetchAndSet = (map, mapping) => {
     let dataByRoute = _.groupBy(data, datum => datum.route);
     let markerData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
       .map(route => {
-        let color = mapping[route[0].route] ? mapping[route[0].route].color : 'black';
-        let icons = ['','75','50','25'].map(alpha => `/png/${color}${alpha}.png`).slice(0, route.length);
-        return _.zip(route, icons).map(([{route, serverTime, position}, icon]) => {
+        let alphas = ['','75','50','25'].slice(0, route.length);
+        return _.zip(route, alphas).map(([{route, serverTime, position}, alpha]) => {
           return {
             title: `${(mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
             position: position,
-            icon: icon
+            icon: `/png/${(mapping[route] || {}).color || 'black'}${alpha}.png`
           }
         })
       });
