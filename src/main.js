@@ -1,24 +1,47 @@
 import 'babel-polyfill';
+import _ from 'underscore'
 import $script from 'scriptjs'
 
+const MAX_POSITIONS = 4;
 let map_centre = {lat: 51.767, lng: -0.230}
 let state = {markers: []}
 
-let setMarkers = (markers) => {
-  console.log("setting state.markers", markers);
+let setMarkers = (map, data) => {
+  console.log("setting state.markers", data);
+  let newMarkers = data.map(marker => newMarker(marker, map));
   state.markers.forEach(marker => marker.setMap(null));
-  state.markers = markers;
+  state.markers = newMarkers;
+}
+
+let fetchAndSet = map => {
+  fetchMarkerData().then(data => {
+    let dataByRoute = _.groupBy(data, datum => datum.route);
+    let markerData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
+      .map(route => {
+        let icons = ['','75','50','25'].map(alpha => `/png/black${alpha}.png`).slice(0, route.length);
+        return _.zip(route, icons).map(([{route, serverTime, position}, icon]) => {
+          return {
+            title: `${route} - ${formatTime(serverTime)}`,
+            position: position,
+            icon: icon
+          }
+        })
+      });
+
+    setMarkers(map, _.flatten(markerData));
+  });
 }
 
 let formatTime = millis => new Date(millis).toLocaleString().split(',')[1]
 
 // TODO: read channel from url query
 let fetchMarkerData = () => fetch('/api/channel/ocado/data').then((response) => response.json()).then(positions => {
-  return positions.map(({route, serverTime, latitude, longitude}) => {
+  return positions.map(({route, timestamp, serverTime, latitude, longitude}) => {
     return {
-      title: `${route} - ${formatTime(serverTime)}`,
+      route: route,
+      serverTime: serverTime,
+      timestamp: timestamp,
       position: {lat: latitude, lng: longitude},
-      icon: '/png/black.png'
     }
   });
 });
@@ -36,9 +59,7 @@ $script("https://maps.googleapis.com/maps/api/js", () => {
     center: map_centre,
     zoom: 14
   });
-  let placeMarkers = places.map(marker => newMarker(marker, map))
-  
-  setInterval(
-    () => fetchMarkerData().then(data => setMarkers(data.map(marker => newMarker(marker, map)))), 10000
-  )
+  places.forEach(marker => newMarker(marker, map));
+  fetchAndSet(map);
+  setInterval(() => fetchAndSet(map), 10000);
 })

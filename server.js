@@ -11,7 +11,7 @@ const app = express();
  *
  ************************************************************/
 
-const MAX_POSITIONS = 10;
+const MAX_POSITIONS = 40;
 let state = {channels: {}}
 
 // Serve application file depending on environment
@@ -42,6 +42,7 @@ app.get('/api/channel/:channelId/data', (req, res) => {
 app.post('/post/:channelId', (req, res) => {
   // TODO: validate req.query
   let gpsData = Object.assign({serverTime: (new Date()).getTime()}, req.query)
+  gpsData.timestamp = Number.parseInt(gpsData.timestamp);
   gpsData.latitude = Number.parseFloat(gpsData.latitude);
   gpsData.longitude = Number.parseFloat(gpsData.longitude);
   let chState = state.channels[req.params.channelId];
