@@ -5,31 +5,27 @@ import $script from 'scriptjs';
 class GoogleMap extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { map: null, mapping: null };
+    this.state = { map: null };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     // TODO: Check that nextState != this.state
-    return true;
+    return !!(nextState.map && nextProps.mapping);
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if(nextState.map && nextState.mapping)
-      fetchAndSet(nextState.map, nextState.mapping, nextProps.routesData);
+    _setState(nextState.map, nextProps.mapping, nextProps.routesData);
   }
 
   componentDidMount() {
     $script("https://maps.googleapis.com/maps/api/js", () => {
-      fetch('/api/channel/ocado/routes-mapping').then((response) => response.json()).then(mapping => {
-        this.setState({
-          map: new google.maps.Map(document.getElementById('map'), {
-            center: this.props.center,
-            zoom: 14
-          }),
-          mapping: mapping
-        }, this.drawPlaces);
-      });
-    })
+      this.setState({
+        map: new google.maps.Map(document.getElementById('map'), {
+          center: this.props.center,
+          zoom: 14
+        })
+      }, this.drawPlaces);
+    });
   }
 
   drawPlaces() {
@@ -58,7 +54,7 @@ let setPolyline = (map, data) => {
   state.polylines = newPolylines;
 }
 
-let fetchAndSet = (map, mapping, data) => {
+let _setState = (map, mapping, data) => {
   let dataByRoute = _.groupBy(data, datum => datum.route);
   let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
   let markerData = routesData.map(route => {

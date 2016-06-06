@@ -11,8 +11,13 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
+    this.fetchMappingData().then(mapping => this.setState({mappingData: mapping}));
     this.fetchMarkerData().then(data => this.setState({routesData: data}));
     setInterval(() => this.fetchMarkerData().then(data => this.setState({routesData: data})), 10000);
+  }
+
+  fetchMappingData() {
+    return fetch('/api/channel/ocado/routes-mapping').then((response) => response.json());
   }
 
   // TODO: read channel from this.props.params
@@ -40,6 +45,7 @@ class HomePage extends React.Component {
     return <div id={DIV_ID}>
       <GoogleMap center={map_center}
                  places={places}
+                 mapping={this.state.mappingData}
                  routesData={this.state.routesData} />
     </div>;
   }
