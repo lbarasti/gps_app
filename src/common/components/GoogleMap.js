@@ -13,10 +13,6 @@ class GoogleMap extends React.Component {
     return !!(nextState.map && nextProps.mapping);
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    _setState(nextState.map, nextProps.mapping, nextProps.routesData);
-  }
-
   componentDidMount() {
     $script("https://maps.googleapis.com/maps/api/js", () => {
       this.setState({
@@ -32,7 +28,36 @@ class GoogleMap extends React.Component {
     this.props.places.forEach(marker => newMarker(marker, this.state.map));
   }
 
+  update() {
+    let dataByRoute = _.groupBy(this.props.routesData, datum => datum.route);
+    let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
+    let markerData = routesData.map(route => {
+      let iconOpacity = [1.0 , 0.75 , 0.50 , 0.25].slice(0, route.length);
+      return _.zip(route, iconOpacity).map(([{route, serverTime, position}, opacity]) => {
+        return {
+          title: `${(this.props.mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
+          position: position,
+          icon: `/png/${(this.props.mapping[route] || {}).color || 'black'}.png`,
+          opacity: opacity
+        }
+      })
+    });
+    let polylineData = routesData.map(route => {
+      return {
+        path: route.map(({position}) => position),
+        geodesic: true,
+        strokeColor: 'green',
+        strokeOpacity: 0.3,
+        strokeWeight: 2
+      }
+    });
+
+    setMarkers(this.state.map, _.flatten(markerData));
+    setPolyline(this.state.map, polylineData);
+  }
+
   render() { // renders an empty div
+    this.update();
     return <div></div>;
   }
 }
@@ -52,34 +77,6 @@ let setPolyline = (map, data) => {
   let newPolylines = data.map(polyline => newPolyline(polyline, map));
   state.polylines.forEach(pl => pl.setMap(null));
   state.polylines = newPolylines;
-}
-
-let _setState = (map, mapping, data) => {
-  let dataByRoute = _.groupBy(data, datum => datum.route);
-  let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
-  let markerData = routesData.map(route => {
-    let iconOpacity = [1.0 , 0.75 , 0.50 , 0.25].slice(0, route.length);
-    return _.zip(route, iconOpacity).map(([{route, serverTime, position}, opacity]) => {
-      return {
-        title: `${(mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
-        position: position,
-        icon: `/png/${(mapping[route] || {}).color || 'black'}.png`,
-        opacity: opacity
-      }
-    })
-  });
-  let polylineData = routesData.map(route => {
-    return {
-      path: route.map(({position}) => position),
-      geodesic: true,
-      strokeColor: 'green',
-      strokeOpacity: 0.3,
-      strokeWeight: 2
-    }
-  });
-
-  setMarkers(map, _.flatten(markerData));
-  setPolyline(map, polylineData);
 }
 
 let formatTime = millis => new Date(millis).toLocaleString().split(',')[1]
