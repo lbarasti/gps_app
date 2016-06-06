@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./style.css";
+import API from '../../api.js';
 import GoogleMap from '../../common/components/GoogleMap';
 
 const DIV_ID = 'map';
@@ -11,18 +12,9 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchMappingData().then(mapping => this.setState({mappingData: mapping}));
-    this.fetchMarkerData().then(data => this.setState({routesData: data}));
-    setInterval(() => this.fetchMarkerData().then(data => this.setState({routesData: data})), 10000);
-  }
-
-  fetchMappingData() {
-    return fetch('/api/channel/ocado/routes-mapping').then((response) => response.json());
-  }
-
-  // TODO: read channel from this.props.params
-  fetchMarkerData() {
-    return fetch('/api/channel/ocado/data').then((response) => response.json());
+    API.fetchMappingData().then(mapping => this.setState({mappingData: mapping}));
+    API.fetchMarkerData().then(data => this.setState({routesData: data}));
+    setInterval(() => API.fetchMarkerData().then(data => this.setState({routesData: data})), 10000);
   }
 
   render() {

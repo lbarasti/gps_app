@@ -10,6 +10,7 @@ class GoogleMap extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // TODO: Check that nextState != this.state
+    console.log("should update?", !!(nextState.map && nextProps.mapping));
     return !!(nextState.map && nextProps.mapping);
   }
 
@@ -56,7 +57,7 @@ class GoogleMap extends React.Component {
     setPolyline(this.state.map, polylineData);
   }
 
-  render() { // renders an empty div
+  render() {
     this.update();
     return <div></div>;
   }
@@ -64,19 +65,19 @@ class GoogleMap extends React.Component {
 
 const MAX_POSITIONS = 4;
 
-let state = {markers: [], polylines: []};
+let _state = {markers: [], polylines: []};
 
 let setMarkers = (map, data) => {
-  // console.log("setting state.markers", data);
+  // console.log("setting _state.markers", data);
   let newMarkers = data.map(marker => newMarker(marker, map));
-  state.markers.forEach(marker => marker.setMap(null));
-  state.markers = newMarkers;
+  _state.markers.forEach(marker => marker.setMap(null));
+  _state.markers = newMarkers;
 }
 let setPolyline = (map, data) => {
-  // console.log("setting state.polyline", data)
+  // console.log("setting _state.polyline", data)
   let newPolylines = data.map(polyline => newPolyline(polyline, map));
-  state.polylines.forEach(pl => pl.setMap(null));
-  state.polylines = newPolylines;
+  _state.polylines.forEach(pl => pl.setMap(null));
+  _state.polylines = newPolylines;
 }
 
 let formatTime = millis => new Date(millis).toLocaleString().split(',')[1]
