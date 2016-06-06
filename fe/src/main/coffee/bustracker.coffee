@@ -29,7 +29,6 @@ getGetRouteForPhone = ->
   
       warnAboutDelayedBuses = (latenessSeconds) ->
         if latenessSeconds and latenessSeconds > maxLatenessSeconds
-          image = getRouteImage 0
           $(delaySelector).addClass('late').removeClass('on-time')
           $(delaySelector).find('.time').text(formatInHms latenessSeconds)
         else
@@ -74,7 +73,7 @@ getGetRouteForPhone = ->
             map: map
   
         newLatenessSeconds = if (age = toPosition.age) and oldLatenessSeconds
-          Math.max oldLatenessSeconds, age
+          Math.min oldLatenessSeconds, age
         else
           oldLatenessSeconds or age
   
@@ -158,15 +157,15 @@ normalBounds = new LatLngBounds bl, tr
 
 handleMissingAndDubiousBusInfo = (isDubious, isMissing, map) ->
   if isMissing
-    $("#missing-bus-info").addClass("show").removeClass("hide")
+    $("#missing-bus-info").removeClass("hidden")
   else
-    $("#missing-bus-info").addClass("hide").removeClass("show")
+    $("#missing-bus-info").addClass("hidden")
     if isDubious
       normalZone.setMap map
-      $("#one-is-outside").addClass("show").removeClass("hide")
+      $("#one-is-outside").removeClass("hidden")
     else
       normalZone.setMap null
-      $("#one-is-outside").addClass("hide").removeClass("show")
+      $("#one-is-outside").addClass("hidden")
 
 #polyfill
 zip = (left, right) -> [left[i], a] for a, i in right

@@ -85,7 +85,7 @@ class Channels
     @data = data
   end
 
-  def respond(params, &_)
+  def respond(params)
     (yield(Time.now.utc.to_i, get_channel_data(params)) || []).create_response
   end
 

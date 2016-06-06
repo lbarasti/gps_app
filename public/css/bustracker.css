@@ -28,10 +28,10 @@ body {
   opacity: 0.7;
   background-color: #eee;
 }
-.hide {
+.hideable.hidden {
   display: none;
 }
-.show {
+.hideable:not(.hidden) {
   display: inline;
 }
 .on-time {

@@ -8,7 +8,7 @@ concat = require 'gulp-concat'
 runSequence = require 'run-sequence'
 del = require 'del'
 
-jadeopts = {}
+jadeopts = pretty: true
 coffeeopts = {}
 stylopts = {}
 
@@ -54,10 +54,10 @@ gulp.task 'copy', ->
     .pipe gulp.dest 'public/png'
 
 gulp.task 'watch', ->
-  gulp.watch 'src/main/coffee/**/*.coffee', ['coffee']
-  gulp.watch 'src/main/jade/**/*.jade', ['jade']
-  gulp.watch 'src/main/styl/**/*.styl', ['styl']
-  gulp.watch 'src/main/resources/**/*.png', ['copy']
+  gulp.watch 'fe/src/main/coffee/**/*.coffee', ['coffee']
+  gulp.watch 'fe/src/main/jade/**/*.jade', ['jade']
+  gulp.watch 'fe/src/main/styl/**/*.styl', ['styl']
+  gulp.watch 'fe/src/main/resources/**/*.png', ['copy']
   
 gulp.task 'coffee', buildCoffee
 
