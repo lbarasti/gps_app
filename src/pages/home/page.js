@@ -7,7 +7,7 @@ const DIV_ID = 'map';
 class HomePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {routesData: []};
+    this.state = {routesData: [], mappingData: {}};
   }
 
   componentDidMount() {
@@ -22,16 +22,7 @@ class HomePage extends React.Component {
 
   // TODO: read channel from this.props.params
   fetchMarkerData() {
-    return fetch('/api/channel/ocado/data').then((response) => response.json()).then(positions => {
-      return positions.map(({route, timestamp, serverTime, latitude, longitude}) => {
-        return {
-          route: route,
-          serverTime: serverTime,
-          timestamp: timestamp,
-          position: {lat: latitude, lng: longitude},
-        }
-      })
-    })
+    return fetch('/api/channel/ocado/data').then((response) => response.json());
   }
 
   render() {

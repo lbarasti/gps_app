@@ -52,6 +52,7 @@ app.post('/post/:channelId', (req, res) => {
   gpsData.timestamp = Number.parseInt(gpsData.timestamp);
   gpsData.latitude = Number.parseFloat(gpsData.latitude);
   gpsData.longitude = Number.parseFloat(gpsData.longitude);
+  gpsData.position = {lat: gpsData.latitude, lng: gpsData.longitude};
   let chState = state.channels[req.params.channelId];
 
   let newState = chState ? chState.concat(gpsData) : [gpsData];
