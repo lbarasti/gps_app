@@ -152,9 +152,9 @@
         case "8c514cdf":
           return red;
         case "61a13865":
-          return black;
-        case "51af0d8e":
           return green;
+        case "51af0d8e":
+          return black;
         case "HTC Desire C":
           return black;
         case "GT-I8190N":
