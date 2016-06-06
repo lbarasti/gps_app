@@ -29,25 +29,28 @@ class GoogleMap extends React.Component {
     this.props.places.forEach(marker => newMarker(marker, this.state.map));
   }
 
+  getColor(route) {
+    return (this.props.mapping[route] || {}).color || 'black';
+  }
+
   update() {
     let dataByRoute = _.groupBy(this.props.routesData, datum => datum.route);
-    let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS))
-    let markerData = routesData.map(route => {
-      let iconOpacity = [1.0 , 0.75 , 0.50 , 0.25].slice(0, route.length);
-      return _.zip(route, iconOpacity).map(([{route, serverTime, position}, opacity]) => {
+    let routesData = _.map(dataByRoute, positions => _.sortBy(positions, p => -p.timestamp).slice(0, MAX_POSITIONS));
+    let markerData = routesData.map(routeData => {
+      return routeData.map(({route, serverTime, position}, idx) => {
         return {
           title: `${(this.props.mapping[route] || {}).name || route} - ${formatTime(serverTime)}`,
           position: position,
-          icon: `/png/${(this.props.mapping[route] || {}).color || 'black'}.png`,
-          opacity: opacity
+          icon: `/png/${this.getColor(route)}.png`,
+          opacity: 1 - idx * 0.25
         }
       })
     });
-    let polylineData = routesData.map(route => {
+    let polylineData = routesData.map(routeData => {
       return {
-        path: route.map(({position}) => position),
+        path: routeData.map(({position}) => position),
         geodesic: true,
-        strokeColor: 'green',
+        strokeColor: this.getColor(routeData[0].route),
         strokeOpacity: 0.3,
         strokeWeight: 2
       }
