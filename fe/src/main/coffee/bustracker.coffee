@@ -107,6 +107,9 @@ getGetRouteForPhone = ->
   
   (phoneId) ->
     switch phoneId
+      when "8c514cdf" then red
+      when "61a13865" then black
+      when "51af0d8e" then green
       when "HTC Desire C" then black
       when "GT-I8190N" then black
       when "blackberry" then black
