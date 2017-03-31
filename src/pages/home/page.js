@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./style.css";
 import API from '../../api.js';
+import _ from 'underscore';
 import GoogleMap from '../../common/components/GoogleMap';
 
 const DIV_ID = 'map';
@@ -25,13 +26,32 @@ class HomePage extends React.Component {
     ];
     let map_center = {lat: 51.767, lng: -0.230};
 
-    return <div id={DIV_ID}>
-      <GoogleMap center={map_center}
-                 places={places}
-                 mapping={this.state.mappingData}
-                 routesData={this.state.routesData} />
-    </div>;
+    // return <div id={DIV_ID}>
+    //   <GoogleMap center={map_center}
+    //              places={places}
+    //              mapping={this.state.mappingData}
+    //              routesData={this.state.routesData} />
+    // </div>;
+    let dataByRoute = _.groupBy(this.state.routesData, r => r.route)
+    let routeIdToMinutesAgo = _.map(dataByRoute, (routeData, routeId) => 
+      [routeId, _.max(_.map(routeData, data => data.serverTime))]
+    ).map(([routeId, lastUpdate]) => [routeId, getPng(this.state.mappingData[routeId]), minutesAgo(lastUpdate)]);
+    console.log(routeIdToMinutesAgo);
+    return <div></div>
   }
+}
+
+let minutesAgo = timestamp => {
+  let diff = new Date().getTime() - timestamp;
+  let minutes = Math.floor(diff / 1000 / 60);
+  return minutes < 1 ? "a few seconds ago" :
+    minutes < 2 ? "a minute ago" : 
+      minutes < 60 ? `${minutes} minutes ago` : "a few hours ago"
+}
+
+let getPng = (mapping) => {
+  let color = (mapping || {}).color || 'black'
+  return `/png/${color}.png`
 }
 
 export default HomePage;
