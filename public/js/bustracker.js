@@ -25,7 +25,7 @@
 }).call(this);
 
 (function() {
-  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llStation, llTitan, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, zip,
+  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
     slice = [].slice;
 
   LatLng = google.maps.LatLng;
@@ -190,6 +190,10 @@
 
   titanY = -0.243518;
 
+  tridentX = 51.768939;
+
+  tridentY = -0.235301;
+
   centerX = 51.764;
 
   centerY = -0.230;
@@ -221,6 +225,8 @@
   llStation = new LatLng(stationX, stationY);
 
   llTitan = new LatLng(titanX, titanY);
+
+  llTrident = new LatLng(tridentX, tridentY);
 
   center = new LatLng(centerX, centerY);
 
@@ -305,6 +311,11 @@
       position: llTitan,
       map: map,
       title: 'Titan'
+    });
+    new Marker({
+      position: llTrident,
+      map: map,
+      title: 'Trident'
     });
     return $.getJSON(dataUrl, (function(jd) {
       return jsonHdlr(jd, map, now, dataUrl);
