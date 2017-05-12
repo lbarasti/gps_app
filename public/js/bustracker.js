@@ -25,7 +25,7 @@
 }).call(this);
 
 (function() {
-  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
+  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, cfcX, cfcY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llCfc, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
     slice = [].slice;
 
   LatLng = google.maps.LatLng;
@@ -194,6 +194,10 @@
 
   tridentY = -0.235301;
 
+  cfcX = 51.770482;
+
+  cfcY = -0.244763;
+
   centerX = 51.764;
 
   centerY = -0.230;
@@ -227,6 +231,8 @@
   llTitan = new LatLng(titanX, titanY);
 
   llTrident = new LatLng(tridentX, tridentY);
+
+  llCfc = new LatLng(cfcX, cfcY);
 
   center = new LatLng(centerX, centerY);
 
@@ -316,6 +322,11 @@
       position: llTrident,
       map: map,
       title: 'Trident'
+    });
+    new Marker({
+      position: llCfc,
+      map: map,
+      title: 'CFC'
     });
     return $.getJSON(dataUrl, (function(jd) {
       return jsonHdlr(jd, map, now, dataUrl);
