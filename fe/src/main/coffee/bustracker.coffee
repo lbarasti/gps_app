@@ -131,6 +131,8 @@ stationX = 51.76373
 stationY = -0.215564
 titanX = 51.762488
 titanY = -0.243518
+tridentX = 51.768939
+tridentY = -0.235301
 centerX = 51.764
 centerY = -0.230
 
@@ -153,6 +155,7 @@ minutesPerHour = 60
 
 llStation = new LatLng stationX, stationY
 llTitan = new LatLng titanX, titanY
+llTrident = new LatLng tridentX, tridentY
 center = new LatLng centerX, centerY
 bl = new LatLng minLat, minLng
 tr = new LatLng maxLat, maxLng
@@ -207,6 +210,11 @@ initialize = (dataUrl) ->
     position: llTitan
     map: map
     title: 'Titan'
+
+  new Marker
+    position: llTrident
+    map: map
+    title: 'Trident'
 
   $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now, dataUrl)
 
