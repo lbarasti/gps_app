@@ -39,7 +39,7 @@
   Polyline = google.maps.Polyline;
 
   getGetRouteForPhone = function() {
-    var Route, black, green, red;
+    var Route, black, green, red, yellow;
     Route = (function() {
       function Route(routeId, colorHex) {
         var delaySelector, drawLineBetweenMarkers, encodedRouteId, getRouteImage, lines, markers, removeOldLinesAndMarkers, warnAboutDelayedBuses;
@@ -147,6 +147,7 @@
     black = new Route('black', '#111');
     red = new Route('red', '#D11');
     green = new Route('green', '#1D1');
+    yellow = new Route('yellow', '#DB1');
     return function(phoneId) {
       switch (phoneId) {
         case "8c514cdf":
@@ -165,6 +166,8 @@
           return red;
         case "strawberry":
           return red;
+        case "ZTDAHMJZ7DZ5MNY5":
+          return yellow;
         default:
           return green;
       }
