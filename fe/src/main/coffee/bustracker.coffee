@@ -104,6 +104,7 @@ getGetRouteForPhone = ->
   black = new Route 'black', '#111'
   red = new Route 'red', '#D11'
   green = new Route 'green', '#1D1'
+  yellow = new Route 'yellow', '#DB1'
   
   (phoneId) ->
     switch phoneId
@@ -115,6 +116,7 @@ getGetRouteForPhone = ->
       when "blackberry" then black
       when "HTC Desire S" then red
       when "strawberry" then red
+      when "ZTDAHMJZ7DZ5MNY5" then yellow
       else green
 
 getRouteForPhone = getGetRouteForPhone()
