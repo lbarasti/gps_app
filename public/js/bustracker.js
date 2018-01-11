@@ -205,6 +205,10 @@
 
   centerY = -0.230;
 
+  remusX = 51.802927;
+
+  remusY = -0.188969;
+
   maxTrail = 5;
 
   jsonRefreshInterval = 11500;
@@ -238,6 +242,8 @@
   llCfc = new LatLng(cfcX, cfcY);
 
   center = new LatLng(centerX, centerY);
+
+  llRemus = new LatLng(remusX, remusY);
 
   bl = new LatLng(minLat, minLng);
 
@@ -330,6 +336,11 @@
       position: llCfc,
       map: map,
       title: 'CFC'
+    });
+    new Marker({
+      position: llRemus,
+      map: map,
+      title: 'Remus'
     });
     return $.getJSON(dataUrl, (function(jd) {
       return jsonHdlr(jd, map, now, dataUrl);
