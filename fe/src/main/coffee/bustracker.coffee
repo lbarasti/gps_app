@@ -139,6 +139,8 @@ cfcX = 51.770482
 cfcY = -0.244763
 centerX = 51.764
 centerY = -0.230
+remusX = 51.802927
+remusY = -0.188969
 
 #configuration
 maxTrail = 5
@@ -162,6 +164,7 @@ llTitan = new LatLng titanX, titanY
 llTrident = new LatLng tridentX, tridentY
 llCfc = new LatLng cfcX, cfcY
 center = new LatLng centerX, centerY
+llRemus = new LatLng remusX, remusY
 bl = new LatLng minLat, minLng
 tr = new LatLng maxLat, maxLng
 normalBounds = new LatLngBounds bl, tr
@@ -225,6 +228,11 @@ initialize = (dataUrl) ->
     position: llCfc
     map: map
     title: 'CFC'
+
+  new Marker
+    position: llRemus
+    map: map
+    title: 'Remus'
 
   $.getJSON dataUrl, ((jd) -> jsonHdlr jd, map, now, dataUrl)
 
