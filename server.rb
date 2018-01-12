@@ -162,7 +162,7 @@ post '/post/:channel' do
         route_history.unshift reading
 
         # TODO: limit the size of the history array.
-        # the stuff below crashes the server!
+        # the stuff below crashes the server...
         if route_history.length > MAX_HISTORY
           history_data[route_id] = route_history.take MAX_HISTORY
         end
