@@ -110,8 +110,9 @@ getGetRouteForPhone = ->
   (phoneId) ->
     switch phoneId
       when "8c514cdf" then red
-      when "HBEDU18322003635" then red
+      when "ZY322QQM5T" then red
       when "61a13865" then green
+      when "HBEDU18322003635" then green
       when "51af0d8e" then black
       when "HTC Desire C" then black
       when "GT-I8190N" then black
@@ -119,7 +120,6 @@ getGetRouteForPhone = ->
       when "HTC Desire S" then red
       when "strawberry" then red
       when "ZTDAHMJZ7DZ5MNY5" then yellow
-      when "ZY322QQM5T" then blue
       else blue
 
 getRouteForPhone = getGetRouteForPhone()

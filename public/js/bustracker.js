@@ -153,9 +153,11 @@
       switch (phoneId) {
         case "8c514cdf":
           return red;
-        case "HBEDU18322003635":
+        case "ZY322QQM5T":
           return red;
         case "61a13865":
+          return green;
+        case "HBEDU18322003635":
           return green;
         case "51af0d8e":
           return black;
@@ -171,8 +173,6 @@
           return red;
         case "ZTDAHMJZ7DZ5MNY5":
           return yellow;
-        case "ZY322QQM5T":
-          return blue;
         default:
           return blue;
       }
