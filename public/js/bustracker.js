@@ -25,7 +25,7 @@
 }).call(this);
 
 (function() {
-  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, cfcX, cfcY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llCfc, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
+  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, cfcX, cfcY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llCfc, llRemus, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, remusX, remusY, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
     slice = [].slice;
 
   LatLng = google.maps.LatLng;
@@ -39,7 +39,7 @@
   Polyline = google.maps.Polyline;
 
   getGetRouteForPhone = function() {
-    var Route, black, green, red, yellow;
+    var Route, black, blue, green, red, yellow;
     Route = (function() {
       function Route(routeId, colorHex) {
         var delaySelector, drawLineBetweenMarkers, encodedRouteId, getRouteImage, lines, markers, removeOldLinesAndMarkers, warnAboutDelayedBuses;
@@ -148,9 +148,12 @@
     red = new Route('red', '#D11');
     green = new Route('green', '#1D1');
     yellow = new Route('yellow', '#DB1');
+    blue = new Route('blue', '#CFF');
     return function(phoneId) {
       switch (phoneId) {
         case "8c514cdf":
+          return red;
+        case "HBEDU18322003635":
           return red;
         case "61a13865":
           return green;
@@ -168,8 +171,10 @@
           return red;
         case "ZTDAHMJZ7DZ5MNY5":
           return yellow;
+        case "ZY322QQM5T":
+          return blue;
         default:
-          return green;
+          return blue;
       }
     };
   };
