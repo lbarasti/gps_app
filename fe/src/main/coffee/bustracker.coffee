@@ -87,6 +87,11 @@ getGetRouteForPhone = ->
   
       @render = (routeUnsorted, map) ->
         route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare r0.timestamp)
+
+        #get rid of points more than maxTrailTime later than the most recent point
+        t0 = route[0].timestamp.getTime() # most recet timestamp
+        route = route.filter (rN) -> (t0 - rN.timestamp.getTime() < maxTrailTime)
+
         routeFromTo = zip [undefined, route...], route
         relevantRouteFromTo = routeFromTo.slice 0, maxTrail
         initState = [0, false, [], [], map]
@@ -109,17 +114,17 @@ getGetRouteForPhone = ->
   
   (phoneId) ->
     switch phoneId
-      when "8c514cdf" then red
       when "ZY322QQM5T" then red
-      when "61a13865" then green
       when "HBEDU18322003635" then green
       when "51af0d8e" then black
-      when "HTC Desire C" then black
-      when "GT-I8190N" then black
-      when "blackberry" then black
-      when "HTC Desire S" then red
-      when "strawberry" then red
       when "ZTDAHMJZ7DZ5MNY5" then yellow
+      when "8c514cdf" then red #old?
+      when "61a13865" then green #old?
+      when "HTC Desire C" then black #old?
+      when "GT-I8190N" then black #old?
+      when "blackberry" then black #old?
+      when "HTC Desire S" then red #old?
+      when "strawberry" then red #old?
       else blue
 
 getRouteForPhone = getGetRouteForPhone()
@@ -147,6 +152,7 @@ remusY = -0.188969
 
 #configuration
 maxTrail = 5
+maxTrailTimeMs = 300000 #5 minutes
 jsonRefreshInterval = 11500
 defaultZoom = 14
 maxLat = 51.7757
