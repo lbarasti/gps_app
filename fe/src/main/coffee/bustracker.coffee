@@ -110,6 +110,7 @@ getGetRouteForPhone = ->
   red = new Route 'red', '#D11'
   green = new Route 'green', '#1D1'
   yellow = new Route 'yellow', '#DB1'
+  orange = new Route 'orange', '#F90'
   blue = new Route 'blue', '#CFF'
   
   (phoneId) ->
@@ -118,6 +119,7 @@ getGetRouteForPhone = ->
       when "HBEDU18322003635" then green
       when "51af0d8e" then black
       when "ZTDAHMJZ7DZ5MNY5" then yellow
+      when "ZY32363XV4" then orange
       when "8c514cdf" then red #old?
       when "61a13865" then green #old?
       when "HTC Desire C" then black #old?
