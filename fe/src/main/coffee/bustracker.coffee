@@ -90,7 +90,7 @@ getGetRouteForPhone = ->
 
         #get rid of points more than maxTrailTime later than the most recent point
         t0 = new Date(route[0].timestamp).getTime() # most recet timestamp
-        route = route.filter (rN) -> (t0 - new Date(rN.timestamp).getTime() < maxTrailTime)
+        route = route.filter (rN) -> (t0 - new Date(rN.timestamp).getTime() < maxTrailTimeMs)
 
         routeFromTo = zip [undefined, route...], route
         relevantRouteFromTo = routeFromTo.slice 0, maxTrail
