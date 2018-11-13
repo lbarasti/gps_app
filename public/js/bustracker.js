@@ -25,7 +25,7 @@
 }).call(this);
 
 (function() {
-  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, cfcX, cfcY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llCfc, llRemus, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, remusX, remusY, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
+  var LatLng, LatLngBounds, Map, Marker, Polyline, bl, center, centerX, centerY, cfcX, cfcY, defaultZoom, formatInHms, getGetRouteForPhone, getRouteForPhone, handleMissingAndDubiousBusInfo, initialize, jsonHdlr, jsonRefreshInterval, llCfc, llRemus, llStation, llTitan, llTrident, maxLat, maxLatenessSeconds, maxLng, maxTrail, maxTrailTimeMs, minLat, minLng, minutesPerHour, modeHandler, msPerSecond, normalBounds, normalZone, remusX, remusY, secondsPerHour, secondsPerMinute, stationX, stationY, titanX, titanY, tr, tridentX, tridentY, zip,
     slice = [].slice;
 
   LatLng = google.maps.LatLng;
@@ -39,7 +39,7 @@
   Polyline = google.maps.Polyline;
 
   getGetRouteForPhone = function() {
-    var Route, black, blue, green, red, yellow;
+    var Route, black, blue, green, orange, red, yellow;
     Route = (function() {
       function Route(routeId, colorHex) {
         var delaySelector, drawLineBetweenMarkers, encodedRouteId, getRouteImage, lines, markers, removeOldLinesAndMarkers, warnAboutDelayedBuses;
@@ -124,9 +124,13 @@
           return [newLatenessSeconds, oldIsDubious || !normalBounds.contains(toLl), slice.call(oldLines).concat([line]), slice.call(oldMarkers).concat([marker]), map];
         };
         this.render = function(routeUnsorted, map) {
-          var _, finalState, initState, isDubious, latenessSeconds, newLines, newMarkers, relevantRouteFromTo, route, routeFromTo;
+          var _, finalState, initState, isDubious, latenessSeconds, newLines, newMarkers, relevantRouteFromTo, route, routeFromTo, t0;
           route = routeUnsorted.sort(function(r0, r1) {
             return r1.timestamp.localeCompare(r0.timestamp);
+          });
+          t0 = route[0].timestamp.getTime();
+          route = route.filter(function(rN) {
+            return t0 - rN.timestamp.getTime() < maxTrailTime;
           });
           routeFromTo = zip([void 0].concat(slice.call(route)), route);
           relevantRouteFromTo = routeFromTo.slice(0, maxTrail);
@@ -148,19 +152,24 @@
     red = new Route('red', '#D11');
     green = new Route('green', '#1D1');
     yellow = new Route('yellow', '#DB1');
+    orange = new Route('orange', '#F90');
     blue = new Route('blue', '#CFF');
     return function(phoneId) {
       switch (phoneId) {
-        case "8c514cdf":
-          return red;
         case "ZY322QQM5T":
           return red;
-        case "61a13865":
-          return green;
         case "HBEDU18322003635":
           return green;
         case "51af0d8e":
           return black;
+        case "ZTDAHMJZ7DZ5MNY5":
+          return yellow;
+        case "ZY32363XV4":
+          return orange;
+        case "8c514cdf":
+          return red;
+        case "61a13865":
+          return green;
         case "HTC Desire C":
           return black;
         case "GT-I8190N":
@@ -171,8 +180,6 @@
           return red;
         case "strawberry":
           return red;
-        case "ZTDAHMJZ7DZ5MNY5":
-          return yellow;
         default:
           return blue;
       }
@@ -215,6 +222,8 @@
   remusY = -0.188969;
 
   maxTrail = 5;
+
+  maxTrailTimeMs = 300000;
 
   jsonRefreshInterval = 11500;
 
