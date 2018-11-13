@@ -128,9 +128,9 @@
           route = routeUnsorted.sort(function(r0, r1) {
             return r1.timestamp.localeCompare(r0.timestamp);
           });
-          t0 = route[0].timestamp.getTime();
+          t0 = new Date(route[0].timestamp).getTime();
           route = route.filter(function(rN) {
-            return t0 - rN.timestamp.getTime() < maxTrailTime;
+            return t0 - new Date(rN.timestamp).getTime() < maxTrailTime;
           });
           routeFromTo = zip([void 0].concat(slice.call(route)), route);
           relevantRouteFromTo = routeFromTo.slice(0, maxTrail);
