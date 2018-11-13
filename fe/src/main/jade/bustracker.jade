@@ -11,9 +11,8 @@ html
     #container
       #info
         div
-          span Server last checked: 
-          span#last-checked
-        each color in ['green', 'red', 'black', 'yellow']
+          span Sorry for overlay: updates in progress
+        each color in ['green', 'red', 'black', 'yellow', 'orange']
           .on-time(id= color)
             img(src='/png/#{color}.png')
             //- intentional ending of line with white space
