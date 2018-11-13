@@ -89,8 +89,8 @@ getGetRouteForPhone = ->
         route = routeUnsorted.sort((r0, r1) -> r1.timestamp.localeCompare r0.timestamp)
 
         #get rid of points more than maxTrailTime later than the most recent point
-        t0 = route[0].timestamp.getTime() # most recet timestamp
-        route = route.filter (rN) -> (t0 - rN.timestamp.getTime() < maxTrailTime)
+        t0 = new Date(route[0].timestamp).getTime() # most recet timestamp
+        route = route.filter (rN) -> (t0 - new Date(rN.timestamp).getTime() < maxTrailTime)
 
         routeFromTo = zip [undefined, route...], route
         relevantRouteFromTo = routeFromTo.slice 0, maxTrail
