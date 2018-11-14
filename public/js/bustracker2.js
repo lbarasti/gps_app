@@ -42,7 +42,7 @@ function updateData(){
 }
 
 function updateCanvas(serverData){
-  console.log("updating...");
+  console.log("updating...",serverData);
   //ctx.clearRect(0,0,getWidth(),getHeight()); // not necessary?
   ctx.drawImage(background,0,0);
   var posData = convertServerToPosData(serverData);
@@ -130,17 +130,29 @@ function convertLngLat(lng, lat, w, h) {
 function getColour(busId){
   val rgb;
   switch(busId){
-    case "ZY322QQM5T": rgb = {r:221,g:17,b:17}; break;
-    case "HBEDU18322003635": rgb = {r:17,g:221,b:17}; break;
-    case "51af0d8e": rgb = {r:17,g:17,b:17}; break;
-    case "ZTDAHMJZ7DZ5MNY5": rgb = {r:221,g:187,b:17}; break;
-    case "ZY32363XV4": rgb = {r:255,g:153,b:0}; break;
-    default: rgb = {
-                r: Math.floor(Math.random() * 255),
-                g: Math.floor(Math.random() * 255),
-                b: Math.floor(Math.random() * 255)
-              }; break;
+    case "ZY322QQM5T":
+      rgb = {r:221, g:17, b:17};
+      break;
+    case "HBEDU18322003635":
+      rgb = {r:17, g:221, b:17};
+      break;
+    case "51af0d8e":
+      rgb = {r:17, g:17, b:17};
+      break;
+    case "ZTDAHMJZ7DZ5MNY5":
+      rgb = {r:221, g:187, b:17};
+      break;
+    case "ZY32363XV4":
+      rgb = {r:255, g:153, b:0};
+      break;
+    default:
+      rgb = {
+        r: Math.floor(Math.random() * 255),
+        g: Math.floor(Math.random() * 255),
+        b: Math.floor(Math.random() * 255)
+      };
   }
+  console.log("id,rgb",busId,rgb)
   return rgb;
   //random colours..
   // return {
