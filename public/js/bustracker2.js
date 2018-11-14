@@ -9,15 +9,15 @@ https://jsfiddle.net/sfLjk9da/11/
   left -0.25 (0) to right -0.21 (800)
   top 51.775 (0) to 51.758
 */
-
 function getWidth(){return 800}
 function getHeight(){return 340}
 function getRefreshMs(){return 3000}
+const dataUrl = "/gethistory/ocado"
 
 var canvas;
 var ctx;
 var background = new Image();
-background.src = "https://img00.deviantart.net/f5d6/i/2009/017/7/d/premade_background_stock_42_by_fairiegoodmother.jpg";
+background.src = "/png/busmap.png";
 
 // Make sure the image is loaded first otherwise nothing will draw.
 window.onload = function(){
@@ -28,17 +28,26 @@ window.onload = function(){
 }
 
 function startTracker(){
-  updateLoop();
+  ctx.drawImage(background,0,0);
+  updateData();
 }
 
-function updateLoop(){
-  console.log("updating");
+function updateData(){
+  //TODO: real data
+  $.getJSON(dataUrl,updateCanvas)
+
+  //test data instead of 
+  //var data = makeDemoData(3);
+  //updateCanvas(data);
+}
+
+function updateCanvas(serverData){
+  console.log("updating...");
   //ctx.clearRect(0,0,getWidth(),getHeight()); // not necessary?
   ctx.drawImage(background,0,0);
-  var serverData = makeDemoData(3); // TODO get real demo data
   var posData = convertServerToPosData(serverData);
   posData.forEach(function(p){draw(ctx,p)});
-  setTimeout(updateLoop, getRefreshMs());
+  setTimeout(updateData, getRefreshMs());
 }
 
 function drawLines(ctx, pos) {
@@ -119,12 +128,26 @@ function convertLngLat(lng, lat, w, h) {
 }
 
 function getColour(busId){
-  //TODO colours..
-  return {
-    r: Math.floor(Math.random() * 255),
-    g: Math.floor(Math.random() * 255),
-    b: Math.floor(Math.random() * 255)
+  val rgb;
+  switch(busId){
+    case "ZY322QQM5T": rgb = {r:221,g:17,b:17}; break;
+    case "HBEDU18322003635": rgb = {r:17,g:221,b:17}; break;
+    case "51af0d8e": rgb = {r:17,g:17,b:17}; break;
+    case "ZTDAHMJZ7DZ5MNY5": rgb = {r:221,g:187,b:17}; break;
+    case "ZY32363XV4": rgb = {r:255,g:153,b:0}; break;
+    default: rgb = {
+                r: Math.floor(Math.random() * 255),
+                g: Math.floor(Math.random() * 255),
+                b: Math.floor(Math.random() * 255)
+              }; break;
   }
+  return rgb;
+  //random colours..
+  // return {
+  //   r: Math.floor(Math.random() * 255),
+  //   g: Math.floor(Math.random() * 255),
+  //   b: Math.floor(Math.random() * 255)
+  // }
 }
 
 function convertServerToPosData(serverData){
