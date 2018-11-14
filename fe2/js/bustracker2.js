@@ -9,17 +9,20 @@ https://jsfiddle.net/sfLjk9da/11/
   left -0.25 (0) to right -0.21 (800)
   top 51.775 (0) to 51.758
 */
+
 function getWidth(){return 800}
 function getHeight(){return 340}
 function getRefreshMs(){return 3000}
 
-var canvas = document.getElementById('busmap');
-var ctx = canvas.getContext('2d');
+var canvas;
+var ctx;
 var background = new Image();
 background.src = "https://img00.deviantart.net/f5d6/i/2009/017/7/d/premade_background_stock_42_by_fairiegoodmother.jpg";
 
 // Make sure the image is loaded first otherwise nothing will draw.
-background.onload = function(){
+window.onload = function(){
+  canvas = document.getElementById('busmap');
+  ctx = canvas.getContext('2d');
   console.log("started");
   startTracker();
 }
