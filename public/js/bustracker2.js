@@ -12,7 +12,7 @@ https://jsfiddle.net/sfLjk9da/11/
 function getWidth(){return 800}
 function getHeight(){return 340}
 function getRefreshMs(){return 3000}
-const dataUrl = "/gethistory/ocado"
+const dataUrl = "/gethistory/ocado";
 
 var canvas;
 var ctx;
@@ -34,7 +34,7 @@ function startTracker(){
 
 function updateData(){
   //TODO: real data
-  $.getJSON(dataUrl,updateCanvas)
+  $.getJSON(dataUrl,updateCanvas);
 
   //test data instead of 
   //var data = makeDemoData(3);
@@ -128,7 +128,7 @@ function convertLngLat(lng, lat, w, h) {
 }
 
 function getColour(busId){
-  val rgb;
+  var rgb;
   switch(busId){
     case "ZY322QQM5T":
       rgb = {r:221, g:17, b:17};
