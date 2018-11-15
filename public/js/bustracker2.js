@@ -33,7 +33,6 @@ function startTracker(){
 }
 
 function updateData(){
-  //TODO: real data
   $.getJSON(dataUrl,updateCanvas);
 
   //test data instead of 
@@ -152,14 +151,7 @@ function getColour(busId){
         b: Math.floor(Math.random() * 255)
       };
   }
-  console.log("id,rgb",busId,rgb)
   return rgb;
-  //random colours..
-  // return {
-  //   r: Math.floor(Math.random() * 255),
-  //   g: Math.floor(Math.random() * 255),
-  //   b: Math.floor(Math.random() * 255)
-  // }
 }
 
 function convertServerToPosData(serverData){
