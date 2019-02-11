@@ -4,7 +4,7 @@ https://jsfiddle.net/sfLjk9da/11/
 */
 
 /*
-    busmap.png data Nov 2018
+  busmap.png data Nov 2018
   if top left = 0,0 then:
   left -0.25 (0) to right -0.21 (800)
   top 51.775 (0) to 51.758
@@ -146,9 +146,9 @@ function getColour(busId){
       break;
     default:
       rgb = {
-        r: Math.floor(Math.random() * 255),
-        g: Math.floor(Math.random() * 255),
-        b: Math.floor(Math.random() * 255)
+        r: Math.floor(Math.random() * 100),
+        g: Math.floor(Math.random() * 100),
+        b: 100 + Math.floor(Math.random() * 150)
       };
   }
   return rgb;
