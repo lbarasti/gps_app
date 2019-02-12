@@ -184,7 +184,7 @@ get '/beta' do
   serve_file '/html/bustracker2.html'
 end
 
-get '/old' do
+get '/alpha' do
   serve_file '/html/bustracker.html'
 end
 
