@@ -129,32 +129,32 @@ function convertLngLat(lng, lat, w, h) {
 function getColour(busId){
   var rgb;
   switch(busId){
-    case "ZY3233X785": //unknown
-      rgb = {r:180, g:180, b:250};
-      break;
-    case "ZY323JXX9R": //unknown
-      rgb = {r:180, g:250, b:250};
-      break;
-    case "ZY323JXXZC": //unknown
-      rgb = {r:250, g:180, b:250};
-      break;
-    case "ZY323K34P5": //unknown
-      rgb = {r:220, g:220, b:250};
-      break; 
     case "ZY322QQM5T":
-      rgb = {r:221, g:17, b:17};
-      break;
-    case "HBEDU18322003635":
-      rgb = {r:17, g:221, b:17};
-      break;
-    case "51af0d8e":
-      rgb = {r:17, g:17, b:17};
-      break;
-    case "ZTDAHMJZ7DZ5MNY5":
-      rgb = {r:221, g:187, b:17};
+      rgb = {r:221, g:17, b:17}; // red
       break;
     case "ZY32363XV4":
-      rgb = {r:255, g:153, b:0};
+      rgb = {r:255, g:153, b:0}; // onion brown - orange
+      break;
+    case "ZY3233X785": //unknown
+      rgb = {r:150, g:150, b:220}; // unknown - pale blue
+      break;
+    case "ZY323JXX9R": //unknown
+      rgb = {r:150, g:220, b:220}; // unknown - pale greeny-blue
+      break;
+    case "ZY323JXXZC": //unknown
+      rgb = {r:220, g:150, b:220}; // unknown - pale purple
+      break;
+    case "ZY323K34P5": //unknown
+      rgb = {r:180, g:130, b:130}; // unknown - pale reddish grey
+      break; 
+    case "HBEDU18322003635":
+      rgb = {r:17, g:221, b:17}; // OLD? green
+      break;
+    case "51af0d8e":
+      rgb = {r:17, g:17, b:17}; // OLD? black
+      break;
+    case "ZTDAHMJZ7DZ5MNY5":
+      rgb = {r:221, g:187, b:17}; // OLD? lemon yellow - orange
       break;
     default:
       rgb = {
