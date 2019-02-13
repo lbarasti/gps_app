@@ -142,10 +142,10 @@ function getColour(busId){
       rgb = {r:221, g:187, b:17}; // [LEMON yellow?]
       break;
     case "ZY323K34P5": //unknown
-      rgb = {r:50, g:17, b:80}; // [CABBAGE purple?]
+      rgb = {r:70, g:0, b:150}; // [CABBAGE purple?]
       break; 
     case "ZY323JXX9R": //unknown
-      rgb = {r:200, g:100, b:100}; // [UNKNOWN - pink?]
+      rgb = {r:250, g:150, b:250}; // [UNKNOWN - pink?]
       break;
     // case "HBEDU18322003635":
     //   rgb = {r:17, g:221, b:17}; // OLD? green

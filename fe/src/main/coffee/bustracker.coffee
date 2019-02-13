@@ -112,22 +112,27 @@ getGetRouteForPhone = ->
   yellow = new Route 'yellow', '#DB1'
   orange = new Route 'orange', '#F90'
   blue = new Route 'blue', '#CFF'
+  pink = new Route 'pink', '#F9F'
   
   (phoneId) ->
     switch phoneId
       when "ZY322QQM5T" then red
-      when "HBEDU18322003635" then green
-      when "51af0d8e" then black
-      when "ZTDAHMJZ7DZ5MNY5" then yellow
       when "ZY32363XV4" then orange
-      when "8c514cdf" then red #old?
-      when "61a13865" then green #old?
-      when "HTC Desire C" then black #old?
-      when "GT-I8190N" then black #old?
-      when "blackberry" then black #old?
-      when "HTC Desire S" then red #old?
-      when "strawberry" then red #old?
-      else blue
+      when "ZY3233X785" then green
+      when "ZY323JXXZC" then yellow
+      when "ZY323K34P5"then black
+      when "ZY323JXX9R" then pink
+      # when "HBEDU18322003635" then green #old?
+      # when "51af0d8e" then black #old?
+      # when "ZTDAHMJZ7DZ5MNY5" then yellow #old?
+      # when "8c514cdf" then red #old?
+      # when "61a13865" then green #old?
+      # when "HTC Desire C" then black #old?
+      # when "GT-I8190N" then black #old?
+      # when "blackberry" then black #old?
+      # when "HTC Desire S" then red #old?
+      # when "strawberry" then red #old?
+      else blue #NB this breaks when there are multiple unknown
 
 getRouteForPhone = getGetRouteForPhone()
 

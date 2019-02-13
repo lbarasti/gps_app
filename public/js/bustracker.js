@@ -39,7 +39,7 @@
   Polyline = google.maps.Polyline;
 
   getGetRouteForPhone = function() {
-    var Route, black, blue, green, orange, red, yellow;
+    var Route, black, blue, green, orange, pink, red, yellow;
     Route = (function() {
       function Route(routeId, colorHex) {
         var delaySelector, drawLineBetweenMarkers, encodedRouteId, getRouteImage, lines, markers, removeOldLinesAndMarkers, warnAboutDelayedBuses;
@@ -154,32 +154,21 @@
     yellow = new Route('yellow', '#DB1');
     orange = new Route('orange', '#F90');
     blue = new Route('blue', '#CFF');
+    pink = new Route('pink', '#F9F');
     return function(phoneId) {
       switch (phoneId) {
         case "ZY322QQM5T":
           return red;
-        case "HBEDU18322003635":
-          return green;
-        case "51af0d8e":
-          return black;
-        case "ZTDAHMJZ7DZ5MNY5":
-          return yellow;
         case "ZY32363XV4":
           return orange;
-        case "8c514cdf":
-          return red;
-        case "61a13865":
+        case "ZY3233X785":
           return green;
-        case "HTC Desire C":
+        case "ZY323JXXZC":
+          return yellow;
+        case "ZY323K34P5":
           return black;
-        case "GT-I8190N":
-          return black;
-        case "blackberry":
-          return black;
-        case "HTC Desire S":
-          return red;
-        case "strawberry":
-          return red;
+        case "ZY323JXX9R":
+          return pink;
         default:
           return blue;
       }
