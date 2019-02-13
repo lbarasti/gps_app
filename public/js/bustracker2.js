@@ -130,32 +130,32 @@ function getColour(busId){
   var rgb;
   switch(busId){
     case "ZY322QQM5T":
-      rgb = {r:221, g:17, b:17}; // red
+      rgb = {r:221, g:17, b:17}; // RASPBERRY red
       break;
     case "ZY32363XV4":
-      rgb = {r:255, g:153, b:0}; // onion brown - orange
+      rgb = {r:255, g:153, b:0}; // ONION orange
       break;
     case "ZY3233X785": //unknown
-      rgb = {r:150, g:150, b:220}; // unknown - pale blue
-      break;
-    case "ZY323JXX9R": //unknown
-      rgb = {r:150, g:220, b:220}; // unknown - pale greeny-blue
+      rgb = {r:17, g:221, b:17}; // [APPLE green?]
       break;
     case "ZY323JXXZC": //unknown
-      rgb = {r:220, g:150, b:220}; // unknown - pale purple
+      rgb = {r:221, g:187, b:17}; // [LEMON yellow?]
       break;
     case "ZY323K34P5": //unknown
-      rgb = {r:180, g:130, b:130}; // unknown - pale reddish grey
+      rgb = {r:50, g:17, b:80}; // [CABBAGE purple?]
       break; 
-    case "HBEDU18322003635":
-      rgb = {r:17, g:221, b:17}; // OLD? green
+    case "ZY323JXX9R": //unknown
+      rgb = {r:200, g:100, b:100}; // [UNKNOWN - pink?]
       break;
-    case "51af0d8e":
-      rgb = {r:17, g:17, b:17}; // OLD? black
-      break;
-    case "ZTDAHMJZ7DZ5MNY5":
-      rgb = {r:221, g:187, b:17}; // OLD? lemon yellow - orange
-      break;
+    // case "HBEDU18322003635":
+    //   rgb = {r:17, g:221, b:17}; // OLD? green
+    //   break;
+    // case "51af0d8e":
+    //   rgb = {r:17, g:17, b:17}; // OLD? black
+    //   break;
+    // case "ZTDAHMJZ7DZ5MNY5":
+    //   rgb = {r:221, g:187, b:17}; // OLD? lemon yellow - orange
+    //   break;
     default:
       rgb = {
         r: Math.floor(Math.random() * 100),
@@ -170,6 +170,8 @@ function convertServerToPosData(serverData){
   return Array.from(Object.keys(serverData), function(busId){
     var col = getColour(busId);
     var dataPoints = serverData[busId].slice(0,4);
+    //TODO: make old data faded
+    //TODO: strip out [very] old data
     return Array.from(dataPoints, function(entry, index) {
       var xy = convertLngLat(entry.longitude,entry.latitude,getWidth(),getHeight());
       var alpha = (index === 0) ? 1 : ((index < 4) ? (60 - index * 15)/100 : 0);
