@@ -129,6 +129,18 @@ function convertLngLat(lng, lat, w, h) {
 function getColour(busId){
   var rgb;
   switch(busId){
+    case "ZY3233X785": //unknown
+      rgb = {r:180, g:180, b:250};
+      break;
+    case "ZY323JXX9R": //unknown
+      rgb = {r:180, g:250, b:250};
+      break;
+    case "ZY323JXXZC": //unknown
+      rgb = {r:250, g:180, b:250};
+      break;
+    case "ZY323K34P5": //unknown
+      rgb = {r:220, g:220, b:250};
+      break; 
     case "ZY322QQM5T":
       rgb = {r:221, g:17, b:17};
       break;
