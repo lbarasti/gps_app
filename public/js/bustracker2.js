@@ -135,27 +135,18 @@ function getColour(busId){
     case "ZY32363XV4":
       rgb = {r:255, g:153, b:0}; // ONION orange
       break;
-    case "ZY3233X785": //unknown
-      rgb = {r:17, g:221, b:17}; // [APPLE green?]
+    case "ZY3233X785":
+      rgb =  {r:250, g:150, b:250}; // [UNKNOWN - pink?]
       break;
-    case "ZY323JXXZC": //unknown
+    case "ZY323JXXZC":
       rgb = {r:221, g:187, b:17}; // [LEMON yellow?]
       break;
-    case "ZY323K34P5": //unknown
-      rgb = {r:70, g:0, b:150}; // [CABBAGE purple?]
+    case "ZY323K34P5":
+      rgb = {r:70, g:0, b:150}; // CABBAGE purple
       break; 
-    case "ZY323JXX9R": //unknown
-      rgb = {r:250, g:150, b:250}; // [UNKNOWN - pink?]
+    case "ZY323JXX9R":
+      rgb = {r:17, g:221, b:17}; // APPLE green
       break;
-    // case "HBEDU18322003635":
-    //   rgb = {r:17, g:221, b:17}; // OLD? green
-    //   break;
-    // case "51af0d8e":
-    //   rgb = {r:17, g:17, b:17}; // OLD? black
-    //   break;
-    // case "ZTDAHMJZ7DZ5MNY5":
-    //   rgb = {r:221, g:187, b:17}; // OLD? lemon yellow - orange
-    //   break;
     default:
       rgb = {
         r: Math.floor(Math.random() * 100),

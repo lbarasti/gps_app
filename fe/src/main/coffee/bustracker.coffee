@@ -122,10 +122,10 @@ getGetRouteForPhone = ->
     switch phoneId
       when "ZY322QQM5T" then red
       when "ZY32363XV4" then orange
-      when "ZY3233X785" then green
+      when "ZY3233X785" then pink
       when "ZY323JXXZC" then yellow
       when "ZY323K34P5"then black
-      when "ZY323JXX9R" then pink
+      when "ZY323JXX9R" then green
       else blue
 
 getRouteForPhone = getGetRouteForPhone()
