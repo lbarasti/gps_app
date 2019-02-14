@@ -162,9 +162,9 @@
         case "ZY32363XV4":
           return orange;
         case "ZY3233X785":
-          return pink;
-        case "ZY323JXXZC":
           return yellow;
+        case "ZY323JXXZC":
+          return pink;
         case "ZY323K34P5":
           return black;
         case "ZY323JXX9R":

@@ -136,10 +136,10 @@ function getColour(busId){
       rgb = {r:255, g:153, b:0}; // ONION orange
       break;
     case "ZY3233X785":
-      rgb =  {r:250, g:150, b:250}; // [UNKNOWN - pink?]
+      rgb =  {r:221, g:187, b:17}; // LEMON yellow
       break;
     case "ZY323JXXZC":
-      rgb = {r:221, g:187, b:17}; // [LEMON yellow?]
+      rgb = {r:250, g:150, b:250}; // [UNKNOWN - pink?]
       break;
     case "ZY323K34P5":
       rgb = {r:70, g:0, b:150}; // CABBAGE purple
