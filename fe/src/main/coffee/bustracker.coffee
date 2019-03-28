@@ -106,27 +106,26 @@ getGetRouteForPhone = ->
   
         [isDubious, relevantRouteFromTo.length]
   
+  #NB Route breaks when there are multiple unknown
+  #TODO: if this coffee hangs around need to get rid of, or update Route
+  #to (as previously) take the phone id as the route id, and not the colour,
+  #which is shared by all unknown phones :( it is a source of non-obvious problems.
   black = new Route 'black', '#111'
   red = new Route 'red', '#D11'
   green = new Route 'green', '#1D1'
   yellow = new Route 'yellow', '#DB1'
   orange = new Route 'orange', '#F90'
   blue = new Route 'blue', '#CFF'
+  pink = new Route 'pink', '#F9F'
   
   (phoneId) ->
     switch phoneId
       when "ZY322QQM5T" then red
-      when "HBEDU18322003635" then green
-      when "51af0d8e" then black
-      when "ZTDAHMJZ7DZ5MNY5" then yellow
       when "ZY32363XV4" then orange
-      when "8c514cdf" then red #old?
-      when "61a13865" then green #old?
-      when "HTC Desire C" then black #old?
-      when "GT-I8190N" then black #old?
-      when "blackberry" then black #old?
-      when "HTC Desire S" then red #old?
-      when "strawberry" then red #old?
+      when "ZY3233X785" then yellow
+      when "ZY323JXXZC" then pink
+      when "ZY323K34P5"then black
+      when "ZY323JXX9R" then green
       else blue
 
 getRouteForPhone = getGetRouteForPhone()

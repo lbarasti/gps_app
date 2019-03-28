@@ -5,13 +5,13 @@ html
     meta(charset="utf8")
     link(rel='stylesheet', href='/css/bustracker.css')
     script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")
-    script(src="http://code.jquery.com/jquery-1.10.1.min.js")
+    script(src="https://code.jquery.com/jquery-1.12.4.min.js")
     script(src="/js/bustracker.js")
   body
     #container
       #info
         div
-          span Sorry for overlay: updates in progress
+          a(href="http://agile-journey-4782.herokuapp.com/beta") Use beta tracker
         each color in ['green', 'red', 'black', 'yellow', 'orange']
           .on-time(id= color)
             img(src='/png/#{color}.png')

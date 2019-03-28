@@ -180,6 +180,14 @@ get '/display/:channel' do
   serve_file '/html/bustracker.html'
 end
 
+get '/beta' do
+  serve_file '/html/bustracker2.html'
+end
+
+get '/gmaps' do
+  serve_file '/html/bustracker.html'
+end
+
 get '/' do
   serve_file '/html/bustracker.html'
 end
